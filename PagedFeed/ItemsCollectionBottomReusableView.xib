@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="U6b-Vx-4bR" customClass="ItemsCollectionBottomReusableView" customModule="DiscountAsciiWarehouse" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="1eV-8D-96O">
+                    <rect key="frame" x="150" y="15" width="20" height="20"/>
+                </activityIndicatorView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have reached the end." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MNP-kc-j1N">
+                    <rect key="frame" x="85" y="18" width="151" height="15"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" red="0.32549019607843138" green="0.32549019607843138" blue="0.32549019607843138" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="A2c-fU-hhJ">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="8" maxY="0.0"/>
+                    <state key="normal" title="Something went wrong. Try again.">
+                        <color key="titleColor" red="0.74509803921568629" green="0.17254901960784313" blue="0.11372549019607843" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="tryAgainTapped" destination="U6b-Vx-4bR" eventType="touchUpInside" id="DwZ-IH-rcy"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="1eV-8D-96O" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="0Iy-cw-zhG"/>
+                <constraint firstItem="A2c-fU-hhJ" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" id="4aa-Fy-YEM"/>
+                <constraint firstItem="MNP-kc-j1N" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="EpM-1Z-ZkL"/>
+                <constraint firstAttribute="bottom" secondItem="A2c-fU-hhJ" secondAttribute="bottom" id="F0i-h1-KYg"/>
+                <constraint firstItem="A2c-fU-hhJ" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" id="Gax-Pl-SE9"/>
+                <constraint firstAttribute="trailing" secondItem="A2c-fU-hhJ" secondAttribute="trailing" id="Kgf-SK-4KI"/>
+                <constraint firstItem="MNP-kc-j1N" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="amV-K6-3hJ"/>
+                <constraint firstItem="1eV-8D-96O" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="dim-zA-lHo"/>
+            </constraints>
+            <connections>
+                <outlet property="activityIndicator" destination="1eV-8D-96O" id="jBF-42-Jhh"/>
+                <outlet property="theEndLabel" destination="MNP-kc-j1N" id="utm-UI-3J2"/>
+                <outlet property="tryAgainButton" destination="A2c-fU-hhJ" id="HXQ-Nf-egn"/>
+            </connections>
+            <point key="canvasLocation" x="444" y="300"/>
+        </collectionReusableView>
+    </objects>
+</document>

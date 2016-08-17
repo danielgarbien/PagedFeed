@@ -29,6 +29,7 @@ private extension AppDelegate {
     func itemsViewController() -> UIViewController {
         let baseURL = NSURL(string: NSBundle.mainBundle().apiBaseUrl())!
         let dataAccess = NetworkDataAccess(baseURL: baseURL, cacheTime: oneHour)
-        return SearchUsersViewController(dataAccess: dataAccess)
+        let imageAccess = NetworkImageAccess(cacheTime: 24 * oneHour)
+        return SearchUsersViewController(dataAccess: dataAccess, imageAccess: imageAccess)
     }
 }

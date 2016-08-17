@@ -11,8 +11,9 @@ import UIKit
 
 class SearchUsersViewController: UIViewController {
     
-    init(dataAccess: DataAccess) {
+    init(dataAccess: DataAccess, imageAccess: ImageAccess) {
         self.dataAccess = dataAccess
+        self.imageAccess = imageAccess
         super.init(nibName: nil, bundle: nil)
     }
  
@@ -31,11 +32,13 @@ class SearchUsersViewController: UIViewController {
     }
     
     private let dataAccess: DataAccess
+    private let imageAccess: ImageAccess
     
     // MARK: - Controllers
     private lazy var usersVC: UsersCollectionViewController
         = UsersCollectionViewController(searchBar: self.searchBar(),
-                                        switchControl: self.userTypeSwitch())
+                                        switchControl: self.userTypeSwitch(),
+                                        imageAccess: self.imageAccess)
     private lazy var navController: UINavigationController
         = UINavigationController(rootViewController: self.usersVC,
                                  hidesBarsOnSwipe: true)
@@ -104,8 +107,8 @@ private extension SearchUsersViewController {
 
 private extension UsersCollectionViewController {
     
-    convenience init(searchBar: UISearchBar, switchControl: UISwitch) {
-        self.init()
+    convenience init(searchBar: UISearchBar, switchControl: UISwitch, imageAccess: ImageAccess) {
+        self.init(imageAccess: imageAccess)
         navigationItem.titleView = searchBar
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: switchControl)
         updateWithSwitchChanged(switchControl)

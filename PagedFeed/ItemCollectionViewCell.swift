@@ -10,10 +10,10 @@ import UIKit
 
 class ItemCollectionViewCell: UICollectionViewCell {
 
-    @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var bottomTitle: UILabel!
     @IBOutlet weak var bottomSubtitle: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet private weak var bottomStackView: UIStackView!
     
@@ -21,5 +21,10 @@ class ItemCollectionViewCell: UICollectionViewCell {
         didSet {
             bottomView.backgroundColor = highlighted ? UIColor.myRedColor() : UIColor.myGreyColor()
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
     }
 }

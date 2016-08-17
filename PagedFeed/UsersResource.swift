@@ -10,6 +10,7 @@ import Foundation
 import Decodable
 
 struct UsersResource {
+    let baseURL: NSURL
     let q: String
     let sort: UsersResourceSort
     let page: Int?
@@ -28,11 +29,7 @@ enum UsersResourceSort {
     }
 }
 
-extension UsersResource: Resource {
-    
-    var path: String? {
-        return "search/users"
-    }
+private extension UsersResource {
     
     var parameters: [String: AnyObject] {
         var param = [String: AnyObject]()
@@ -41,6 +38,15 @@ extension UsersResource: Resource {
         param["page"] = page
         param["per_page"] = pageSize
         return param
+    }
+}
+
+extension UsersResource: Resource {
+
+    func request() -> NSURLRequest {
+        return NSURLRequest(baseURL: baseURL,
+                            path: "search/users",
+                            parameters: parameters)!
     }
     
     var parse: (NSData) throws -> [User] {

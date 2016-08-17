@@ -31,6 +31,7 @@
 		65B34E351CFB5D8A005FD30F /* Decodable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65B34E331CFB5D89005FD30F /* Decodable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		65B34E3B1CFB7DF7005FD30F /* DaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */; };
 		65B34E401CFB8309005FD30F /* NSBundle+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */; };
+		65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */; };
 		65C995EF1D36AD060081F1E3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995EE1D36AD060081F1E3 /* User.swift */; };
 		65C995F11D36AE2D0081F1E3 /* UsersResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995F01D36AE2D0081F1E3 /* UsersResource.swift */; };
 		65C995F31D36AEF90081F1E3 /* User+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995F21D36AEF90081F1E3 /* User+Decodable.swift */; };
@@ -106,6 +107,7 @@
 		65B34E331CFB5D89005FD30F /* Decodable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Decodable.framework; path = Carthage/Carthage/Build/iOS/Decodable.framework; sourceTree = "<group>"; };
 		65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DaoTests.swift; sourceTree = "<group>"; };
 		65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+Convenience.swift"; sourceTree = "<group>"; };
+		65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLRequest+Convenience.swift"; sourceTree = "<group>"; };
 		65C995EE1D36AD060081F1E3 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		65C995F01D36AE2D0081F1E3 /* UsersResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersResource.swift; sourceTree = "<group>"; };
 		65C995F21D36AEF90081F1E3 /* User+Decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "User+Decodable.swift"; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				65155C411D00B91B00F94EE2 /* Resource.swift */,
 				65C995F01D36AE2D0081F1E3 /* UsersResource.swift */,
 				65C995F21D36AEF90081F1E3 /* User+Decodable.swift */,
+				65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -489,6 +492,7 @@
 				65C995EF1D36AD060081F1E3 /* User.swift in Sources */,
 				65F40B301D07496800645857 /* ItemsCollectionViewDataSource.swift in Sources */,
 				65447DD31D02C6E30005AFE5 /* Utils.swift in Sources */,
+				65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */,
 				65A747811D04305F00B88F0E /* ItemsCollectionViewController.swift in Sources */,
 				65155C421D00B91B00F94EE2 /* Resource.swift in Sources */,
 				65C995F31D36AEF90081F1E3 /* User+Decodable.swift in Sources */,

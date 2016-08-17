@@ -22,17 +22,19 @@ enum SynchronizerError: ErrorType {
 class Synchronizer {
     
     private lazy var session: NSURLSession! = NSURLSession(
-        configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+        configuration: self.sessionConfiguration,
         delegate: SessionDelegate(cacheTime: self.cacheTime),
         delegateQueue: NSOperationQueue.mainQueue()
     )
     private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
+
+    private let sessionConfiguration: NSURLSessionConfiguration
+    private let cacheTime: NSTimeInterval
     
-    let baseURL: NSURL
-    let cacheTime: NSTimeInterval
-    init(baseURL: NSURL, cacheTime: NSTimeInterval) {
-        self.baseURL = baseURL
+    init(cacheTime: NSTimeInterval, URLCache: NSURLCache? = NSURLSessionConfiguration.defaultSessionConfiguration().URLCache) {
         self.cacheTime = cacheTime
+        self.sessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        self.sessionConfiguration.URLCache = URLCache
     }
     
     func cancelSession() {
@@ -40,15 +42,17 @@ class Synchronizer {
         session = nil
     }
     
+    typealias CancelLoading = () -> Void
     
-    func loadResource<R: Resource, Object where R.ParsedObject == Object>(resource: R, completion: SynchronizerResult<Object> -> ()) {
+    func loadResource<R: Resource, Object where R.ParsedObject == Object>
+        (resource: R, completion: SynchronizerResult<Object> -> ()) -> CancelLoading {
         
         func completeOnMainThread(result: SynchronizerResult<Object>) {
             if case .Error = result { print(result) }
             addToMainQueue{ completion(result) }
         }
         
-        let request = resource.requestWithBaseURL(baseURL)
+        let request = resource.request()
         let task = session.dataTaskWithRequest(request)
         print("Request: \(request)")
         sessionDelegate.setCompletionHandlerForTask(task) { (data, response, error) in
@@ -77,6 +81,10 @@ class Synchronizer {
             }
         }
         task.resume()
+        
+        return { [weak task] in
+            task?.cancel()
+        }
     }
 }
 

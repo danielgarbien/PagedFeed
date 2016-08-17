@@ -32,6 +32,9 @@
 		65B34E3B1CFB7DF7005FD30F /* DaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */; };
 		65B34E401CFB8309005FD30F /* NSBundle+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */; };
 		65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */; };
+		65C0D9E01D650A410033179C /* ImageAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9DF1D650A410033179C /* ImageAccess.swift */; };
+		65C0D9E21D650B560033179C /* NetworkImageAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9E11D650B560033179C /* NetworkImageAccess.swift */; };
+		65C0D9E41D650CE80033179C /* ImageResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9E31D650CE80033179C /* ImageResource.swift */; };
 		65C995EF1D36AD060081F1E3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995EE1D36AD060081F1E3 /* User.swift */; };
 		65C995F11D36AE2D0081F1E3 /* UsersResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995F01D36AE2D0081F1E3 /* UsersResource.swift */; };
 		65C995F31D36AEF90081F1E3 /* User+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C995F21D36AEF90081F1E3 /* User+Decodable.swift */; };
@@ -108,6 +111,9 @@
 		65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DaoTests.swift; sourceTree = "<group>"; };
 		65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+Convenience.swift"; sourceTree = "<group>"; };
 		65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLRequest+Convenience.swift"; sourceTree = "<group>"; };
+		65C0D9DF1D650A410033179C /* ImageAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAccess.swift; sourceTree = "<group>"; };
+		65C0D9E11D650B560033179C /* NetworkImageAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkImageAccess.swift; sourceTree = "<group>"; };
+		65C0D9E31D650CE80033179C /* ImageResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResource.swift; sourceTree = "<group>"; };
 		65C995EE1D36AD060081F1E3 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		65C995F01D36AE2D0081F1E3 /* UsersResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersResource.swift; sourceTree = "<group>"; };
 		65C995F21D36AEF90081F1E3 /* User+Decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "User+Decodable.swift"; sourceTree = "<group>"; };
@@ -172,9 +178,10 @@
 			isa = PBXGroup;
 			children = (
 				65155C411D00B91B00F94EE2 /* Resource.swift */,
+				65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */,
 				65C995F01D36AE2D0081F1E3 /* UsersResource.swift */,
 				65C995F21D36AEF90081F1E3 /* User+Decodable.swift */,
-				65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */,
+				65C0D9E31D650CE80033179C /* ImageResource.swift */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -196,6 +203,7 @@
 				651791AE1CFE3CF6006214E1 /* NetworkDataAccess.swift */,
 				65155C451D00FA0200F94EE2 /* PagedResource.swift */,
 				65C995F41D36B27C0081F1E3 /* UsersPagedResource.swift */,
+				65C0D9E11D650B560033179C /* NetworkImageAccess.swift */,
 			);
 			name = "Network Implementation";
 			sourceTree = "<group>";
@@ -276,6 +284,7 @@
 			children = (
 				65447DCD1D02A2B30005AFE5 /* Network Implementation */,
 				656A37331CFB41F0001407DA /* DataAccess.swift */,
+				65C0D9DF1D650A410033179C /* ImageAccess.swift */,
 				6512816B1D09D8F1001CB91D /* LoadingFeedStateMachine.swift */,
 			);
 			name = "Data Access Layer";
@@ -481,6 +490,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65C0D9E21D650B560033179C /* NetworkImageAccess.swift in Sources */,
 				650A2BD51D0BEE89008FB18E /* UICollectionView+Conveniences.swift in Sources */,
 				65CBCCAA1D3801BB003FF8A2 /* UsersCollectionViewController.swift in Sources */,
 				65F40B331D07519700645857 /* ItemsCollectionBottomReusableView.swift in Sources */,
@@ -492,6 +502,7 @@
 				65C995EF1D36AD060081F1E3 /* User.swift in Sources */,
 				65F40B301D07496800645857 /* ItemsCollectionViewDataSource.swift in Sources */,
 				65447DD31D02C6E30005AFE5 /* Utils.swift in Sources */,
+				65C0D9E01D650A410033179C /* ImageAccess.swift in Sources */,
 				65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */,
 				65A747811D04305F00B88F0E /* ItemsCollectionViewController.swift in Sources */,
 				65155C421D00B91B00F94EE2 /* Resource.swift in Sources */,
@@ -504,6 +515,7 @@
 				6512816E1D09F017001CB91D /* ItemsCollectionBottomReusableView+LoadingFeedState.swift in Sources */,
 				6512816C1D09D8F1001CB91D /* LoadingFeedStateMachine.swift in Sources */,
 				651791AB1CFE164B006214E1 /* Synchronizer.swift in Sources */,
+				65C0D9E41D650CE80033179C /* ImageResource.swift in Sources */,
 				65CA5B711D109539009F8051 /* CollectionRegistrationState.swift in Sources */,
 				65A747841D04A8D100B88F0E /* SimpleCollectionViewDataSource.swift in Sources */,
 				650A2BE41D0C2B0E008FB18E /* UIViewController+Containment.swift in Sources */,

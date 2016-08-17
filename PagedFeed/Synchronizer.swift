@@ -28,10 +28,8 @@ class Synchronizer {
     )
     private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
     
-    let baseURL: NSURL
     let cacheTime: NSTimeInterval
-    init(baseURL: NSURL, cacheTime: NSTimeInterval) {
-        self.baseURL = baseURL
+    init(cacheTime: NSTimeInterval) {
         self.cacheTime = cacheTime
     }
     
@@ -48,7 +46,7 @@ class Synchronizer {
             addToMainQueue{ completion(result) }
         }
         
-        let request = resource.requestWithBaseURL(baseURL)
+        let request = resource.request()
         let task = session.dataTaskWithRequest(request)
         print("Request: \(request)")
         sessionDelegate.setCompletionHandlerForTask(task) { (data, response, error) in

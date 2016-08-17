@@ -11,9 +11,11 @@ import Foundation
 class NetworkDataAccess {
     
     private let synchronizer: Synchronizer
+    private let baseURL: NSURL
     
     init(baseURL: NSURL, cacheTime: NSTimeInterval) {
-        self.synchronizer = Synchronizer(baseURL: baseURL, cacheTime: cacheTime)
+        self.baseURL = baseURL
+        self.synchronizer = Synchronizer(cacheTime: cacheTime)
     }
 }
 
@@ -24,10 +26,10 @@ extension NetworkDataAccess: DataAccess {
         // cancel previous session
         synchronizer.cancelSession()
         
-        let resource = UsersResource(q: q, sort: sort, page: nil, pageSize: nil)
+        let resource = UsersResource(baseURL: baseURL, q: q, sort: sort, page: nil, pageSize: nil)
         synchronizer.loadPagedResource(resource, pageSize: pageSize, completion: completion)
     }
-}
+    }
 
 // MARK: - Loading PagedResource
 private extension Synchronizer {

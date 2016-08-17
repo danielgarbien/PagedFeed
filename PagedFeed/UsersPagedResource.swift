@@ -14,6 +14,7 @@ extension UsersResource: PagedResource {
     
     func resourceForPage(page: Int, pageSize: Int) -> UsersResource {
         return UsersResource(
+            baseURL: baseURL,
             q: q,
             sort: sort,
             page: page,

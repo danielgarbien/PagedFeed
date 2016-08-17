@@ -30,10 +30,14 @@ private extension ItemCollectionViewCell {
     func configureWithUser(user: User, imageAccess: ImageAccess) {
         bottomSubtitle.text = String(user.type)
         bottomTitle.text = user.login
-        _ = imageAccess.imageWithURL(user.avatarURL) { [weak self] (image) in
+        
+        let cancelImageLoading = imageAccess.imageWithURL(user.avatarURL) { [weak self] (image) in
             self?.imageView.image = image
         }
-        
+        prepareForReuseBlock = { [weak self] in
+            self?.imageView.image = nil
+            cancelImageLoading()
+        }
     }
     
     static func preferredHeightWithUser(user: User) -> CGFloat {

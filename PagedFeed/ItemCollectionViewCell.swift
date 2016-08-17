@@ -10,6 +10,8 @@ import UIKit
 
 class ItemCollectionViewCell: UICollectionViewCell {
 
+    var prepareForReuseBlock: (() -> Void)?
+    
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var bottomTitle: UILabel!
     @IBOutlet weak var bottomSubtitle: UILabel!
@@ -25,6 +27,7 @@ class ItemCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        prepareForReuseBlock?()
+        prepareForReuseBlock = nil
     }
 }

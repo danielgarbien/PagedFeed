@@ -22,22 +22,25 @@ enum SynchronizerError: ErrorType {
 class Synchronizer {
     
     private lazy var session: NSURLSession! = NSURLSession(
-        configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+        configuration: self.sessionConfiguration,
         delegate: SessionDelegate(cacheTime: self.cacheTime),
         delegateQueue: NSOperationQueue.mainQueue()
     )
     private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
+
+    private let sessionConfiguration: NSURLSessionConfiguration
+    private let cacheTime: NSTimeInterval
     
-    let cacheTime: NSTimeInterval
-    init(cacheTime: NSTimeInterval) {
+    init(cacheTime: NSTimeInterval, URLCache: NSURLCache? = NSURLSessionConfiguration.defaultSessionConfiguration().URLCache) {
         self.cacheTime = cacheTime
+        self.sessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        self.sessionConfiguration.URLCache = URLCache
     }
     
     func cancelSession() {
         session.invalidateAndCancel()
         session = nil
     }
-    
     
     func loadResource<R: Resource, Object where R.ParsedObject == Object>(resource: R, completion: SynchronizerResult<Object> -> ()) {
         

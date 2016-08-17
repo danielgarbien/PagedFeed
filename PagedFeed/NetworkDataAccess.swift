@@ -41,7 +41,7 @@ private extension Synchronizer {
     func loadPagedResource<R: PagedResource>(resource: R, pageSize: Int, page: Int, completion: (FeedResult<R.ParsedObject>) -> Void) {
         let resource = resource.resourceForPage(page, pageSize: pageSize)
     
-        loadResource(resource) { synchronizerResult in
+        _ = loadResource(resource) { synchronizerResult in
             let nextPage: FeedResult<R.ParsedObject>.LoadPageBlock = { [weak self] completion in
                 self?.loadPagedResource(resource, pageSize: pageSize, page: page + 1, completion: completion)
             }

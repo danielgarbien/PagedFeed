@@ -42,7 +42,10 @@ class Synchronizer {
         session = nil
     }
     
-    func loadResource<R: Resource, Object where R.ParsedObject == Object>(resource: R, completion: SynchronizerResult<Object> -> ()) {
+    typealias CancelLoading = () -> Void
+    
+    func loadResource<R: Resource, Object where R.ParsedObject == Object>
+        (resource: R, completion: SynchronizerResult<Object> -> ()) -> CancelLoading {
         
         func completeOnMainThread(result: SynchronizerResult<Object>) {
             if case .Error = result { print(result) }
@@ -78,6 +81,10 @@ class Synchronizer {
             }
         }
         task.resume()
+        
+        return { [weak task] in
+            task?.cancel()
+        }
     }
 }
 

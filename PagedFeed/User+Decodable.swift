@@ -15,7 +15,9 @@ extension User: Decodable {
         return try User(
             login: j => "login",
             score: j => "score",
-            type: j => "type")
+            type: j => "type",
+            avatarURL: j => "avatar_url"
+        )
     }
 }
 

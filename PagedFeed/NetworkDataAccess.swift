@@ -29,46 +29,18 @@ extension NetworkDataAccess: DataAccess {
         let resource = UsersResource(baseURL: baseURL, q: q, sort: sort, page: nil, pageSize: nil)
         synchronizer.loadPagedResource(resource, pageSize: pageSize, completion: completion)
     }
-    }
+}
 
-// MARK: - Loading PagedResource
-private extension Synchronizer {
+extension UsersResource: PagedResource {
     
-    func loadPagedResource<R: PagedResource>(resource: R, pageSize: Int, completion: (FeedResult<R.ParsedObject>) -> Void) {
-        loadPagedResource(resource, pageSize: pageSize, page: 0, completion: completion)
-    }
+    typealias ParsedObject = [User]
     
-    func loadPagedResource<R: PagedResource>(resource: R, pageSize: Int, page: Int, completion: (FeedResult<R.ParsedObject>) -> Void) {
-        let resource = resource.resourceForPage(page, pageSize: pageSize)
-    
-        _ = loadResource(resource) { synchronizerResult in
-            let nextPage: FeedResult<R.ParsedObject>.LoadPageBlock = { [weak self] completion in
-                self?.loadPagedResource(resource, pageSize: pageSize, page: page + 1, completion: completion)
-            }
-            let retry: FeedResult<R.ParsedObject>.LoadPageBlock = { [weak self] completion in
-                self?.loadPagedResource(resource, pageSize: pageSize, page: page, completion: completion)
-            }
-            let endPage: FeedResult<R.ParsedObject>.LoadPageBlock = { completion in
-                completion(FeedResult<R.ParsedObject>.FeedEnd)
-            }
-            
-            switch synchronizerResult {
-            case .Success(let result):
-                // strangely result must be casted to R.ParsedObject to be used as _ArrayType
-                switch (result as R.ParsedObject).count {
-                case 0:
-                    completion(.FeedEnd)
-                case 1..<pageSize:
-                    // if there is less results on page than page limit, then the next page is FeedEnd
-                    completion(.Success(page: result, nextPage: endPage))
-                default:
-                    completion(.Success(page: result, nextPage: nextPage))
-                }
-            case .NoData:
-                completion(.FeedEnd)
-            case .Error(let err):
-                completion(.Error(error: err, retry: retry))
-            }
-        }
+    func resourceForPage(page: Int, pageSize: Int) -> UsersResource {
+        return UsersResource(
+            baseURL: baseURL,
+            q: q,
+            sort: sort,
+            page: page,
+            pageSize: pageSize)
     }
 }

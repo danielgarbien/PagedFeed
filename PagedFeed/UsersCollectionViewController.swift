@@ -11,10 +11,14 @@ import UIKit
 
 class UsersCollectionViewController: ItemsCollectionViewController<User> {
     
-    init() {
+    let imageAccess: ImageAccess
+    
+    init(imageAccess: ImageAccess) {
+        self.imageAccess = imageAccess
         super.init(
             configureCell: { cell, user in
-                cell.configureWithUser(user)
+                cell.configureWithUser(user, imageAccess: imageAccess)
+                
             },
             estimatedCellHeight: ItemCollectionViewCell.estimatedHeight(),
             preferredCellHeight: ItemCollectionViewCell.preferredHeightWithUser)
@@ -23,10 +27,17 @@ class UsersCollectionViewController: ItemsCollectionViewController<User> {
 
 private extension ItemCollectionViewCell {
     
-    func configureWithUser(user: User) {
-        contentLabel.text = user.login
+    func configureWithUser(user: User, imageAccess: ImageAccess) {
         bottomSubtitle.text = String(user.type)
-        bottomTitle.text = String(user.score)
+        bottomTitle.text = user.login
+        
+        let cancelImageLoading = imageAccess.imageWithURL(user.avatarURL) { [weak self] (image) in
+            self?.imageView.image = image
+        }
+        prepareForReuseBlock = { [weak self] in
+            self?.imageView.image = nil
+            cancelImageLoading()
+        }
     }
     
     static func preferredHeightWithUser(user: User) -> CGFloat {

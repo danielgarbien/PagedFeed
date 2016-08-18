@@ -8,16 +8,24 @@
 
 import Foundation
 
+protocol Resource {
+    func request() -> NSURLRequest
+    
+    associatedtype ParsedObject
+    var parse: (NSData) throws -> ParsedObject { get }
+}
+
 enum SynchronizerResult<Result> {
     case Success(Result)
     case NoData
-    case Error(ErrorType) /// Might be SynchronizerError or parsing error thrown by Resource
+    case Error(ErrorType) /// Might be SynchronizerError or parsing error thrown by Resource parse function
 }
 
 enum SynchronizerError: ErrorType {
     case WrongStatusError(status: Int)
     case URLSessionError(NSError)
 }
+
 
 class Synchronizer {
     
@@ -27,7 +35,6 @@ class Synchronizer {
         delegateQueue: NSOperationQueue.mainQueue()
     )
     private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
-
     private let sessionConfiguration: NSURLSessionConfiguration
     private let cacheTime: NSTimeInterval
     
@@ -49,7 +56,7 @@ class Synchronizer {
         
         func completeOnMainThread(result: SynchronizerResult<Object>) {
             if case .Error = result { print(result) }
-            addToMainQueue{ completion(result) }
+            NSOperationQueue.mainQueue().addOperationWithBlock{ completion(result) }
         }
         
         let request = resource.request()

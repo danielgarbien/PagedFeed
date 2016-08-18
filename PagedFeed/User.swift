@@ -13,6 +13,7 @@ struct User {
     let login: String
     let score: Double
     let type: UserType
+    let avatarURL: NSURL
 }
 
 enum UserType: String {

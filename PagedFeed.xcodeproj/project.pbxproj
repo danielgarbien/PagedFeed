@@ -12,12 +12,10 @@
 		650A2BE91D0C2BDE008FB18E /* SearchUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650A2BE81D0C2BDE008FB18E /* SearchUsersViewController.swift */; };
 		6512816C1D09D8F1001CB91D /* LoadingFeedStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6512816B1D09D8F1001CB91D /* LoadingFeedStateMachine.swift */; };
 		6512816E1D09F017001CB91D /* ItemsCollectionBottomReusableView+LoadingFeedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6512816D1D09F017001CB91D /* ItemsCollectionBottomReusableView+LoadingFeedState.swift */; };
-		65155C421D00B91B00F94EE2 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65155C411D00B91B00F94EE2 /* Resource.swift */; };
 		65155C461D00FA0200F94EE2 /* PagedResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65155C451D00FA0200F94EE2 /* PagedResource.swift */; };
 		651791AB1CFE164B006214E1 /* Synchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651791AA1CFE164B006214E1 /* Synchronizer.swift */; };
 		651791AF1CFE3CF6006214E1 /* NetworkDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651791AE1CFE3CF6006214E1 /* NetworkDataAccess.swift */; };
 		65447DD11D02C2540005AFE5 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65447DD01D02C2540005AFE5 /* SessionDelegate.swift */; };
-		65447DD31D02C6E30005AFE5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65447DD21D02C6E30005AFE5 /* Utils.swift */; };
 		656A36FF1CFB2FB1001407DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656A36FE1CFB2FB1001407DA /* AppDelegate.swift */; };
 		656A37061CFB2FB1001407DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 656A37051CFB2FB1001407DA /* Assets.xcassets */; };
 		656A37091CFB2FB1001407DA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 656A37071CFB2FB1001407DA /* LaunchScreen.storyboard */; };
@@ -88,12 +86,10 @@
 		650A2BE81D0C2BDE008FB18E /* SearchUsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchUsersViewController.swift; sourceTree = "<group>"; };
 		6512816B1D09D8F1001CB91D /* LoadingFeedStateMachine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingFeedStateMachine.swift; sourceTree = "<group>"; };
 		6512816D1D09F017001CB91D /* ItemsCollectionBottomReusableView+LoadingFeedState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ItemsCollectionBottomReusableView+LoadingFeedState.swift"; sourceTree = "<group>"; };
-		65155C411D00B91B00F94EE2 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		65155C451D00FA0200F94EE2 /* PagedResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagedResource.swift; sourceTree = "<group>"; };
 		651791AA1CFE164B006214E1 /* Synchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronizer.swift; sourceTree = "<group>"; };
 		651791AE1CFE3CF6006214E1 /* NetworkDataAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDataAccess.swift; sourceTree = "<group>"; };
 		65447DD01D02C2540005AFE5 /* SessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
-		65447DD21D02C6E30005AFE5 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		656A36FB1CFB2FB1001407DA /* PagedFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PagedFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		656A36FE1CFB2FB1001407DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		656A37051CFB2FB1001407DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -181,7 +177,6 @@
 		65155C3B1D00B5D600F94EE2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				65155C411D00B91B00F94EE2 /* Resource.swift */,
 				65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */,
 				65C995F01D36AE2D0081F1E3 /* UsersResource.swift */,
 				65C995F21D36AEF90081F1E3 /* User+Decodable.swift */,
@@ -197,7 +192,6 @@
 				65155C3B1D00B5D600F94EE2 /* Resources */,
 				651791AA1CFE164B006214E1 /* Synchronizer.swift */,
 				65447DD01D02C2540005AFE5 /* SessionDelegate.swift */,
-				65447DD21D02C6E30005AFE5 /* Utils.swift */,
 			);
 			name = "Network Layer";
 			sourceTree = "<group>";
@@ -517,11 +511,9 @@
 				65C995F51D36B27C0081F1E3 /* UsersPagedResource.swift in Sources */,
 				65C995EF1D36AD060081F1E3 /* User.swift in Sources */,
 				65F40B301D07496800645857 /* ItemsCollectionViewDataSource.swift in Sources */,
-				65447DD31D02C6E30005AFE5 /* Utils.swift in Sources */,
 				65C0D9E01D650A410033179C /* ImageAccess.swift in Sources */,
 				65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */,
 				65A747811D04305F00B88F0E /* ItemsCollectionViewController.swift in Sources */,
-				65155C421D00B91B00F94EE2 /* Resource.swift in Sources */,
 				65C995F31D36AEF90081F1E3 /* User+Decodable.swift in Sources */,
 				65447DD11D02C2540005AFE5 /* SessionDelegate.swift in Sources */,
 				65C995F11D36AE2D0081F1E3 /* UsersResource.swift in Sources */,

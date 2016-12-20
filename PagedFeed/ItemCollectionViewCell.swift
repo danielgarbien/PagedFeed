@@ -17,11 +17,11 @@ class ItemCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var bottomSubtitle: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     
-    @IBOutlet private weak var bottomStackView: UIStackView!
+    @IBOutlet fileprivate weak var bottomStackView: UIStackView!
     
-    override var highlighted: Bool {
+    override var isHighlighted: Bool {
         didSet {
-            bottomView.backgroundColor = highlighted ? UIColor.myRedColor() : UIColor.myGreyColor()
+            bottomView.backgroundColor = isHighlighted ? UIColor.myRedColor() : UIColor.myGreyColor()
         }
     }
     

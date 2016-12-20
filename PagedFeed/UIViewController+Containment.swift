@@ -16,14 +16,14 @@ extension UIViewController {
      Embeds its view in container.
      Calls didMoveToParentViewController on childController at a last step.
      */
-    func addImmediatelyChildViewController(childController: UIViewController, embeddedInView container: UIView, belowSubview: UIView? = nil) {
+    func addImmediatelyChildViewController(_ childController: UIViewController, embeddedInView container: UIView, belowSubview: UIView? = nil) {
         addChildViewController(childController)
         container.embedSubview(childController.view, belowView:belowSubview)
-        childController.didMoveToParentViewController(self)
+        childController.didMove(toParentViewController: self)
     }
     
     func removeImmediatelyFromParentViewController() {
-        willMoveToParentViewController(nil)
+        willMove(toParentViewController: nil)
         view.removeFromSuperview()
         removeFromParentViewController()
     }
@@ -32,7 +32,7 @@ extension UIViewController {
 
 extension UIView {
     
-    func embedSubview(view: UIView, belowView: UIView? = nil) {
+    func embedSubview(_ view: UIView, belowView: UIView? = nil) {
         if let topView = belowView {
             insertSubview(view, belowSubview: topView)
         }
@@ -48,22 +48,22 @@ extension UIView {
 
 extension NSLayoutConstraint {
     
-    static func activateConstraintsForItem(item: AnyObject, withEqualFrameAsItem secondItem: AnyObject) {
-        activateConstraints(
+    static func activateConstraintsForItem(_ item: AnyObject, withEqualFrameAsItem secondItem: AnyObject) {
+        activate(
             constraintsForItem(
                 item,
-                withEqualAttributes: [.Left, .Right, .Top, .Bottom],
+                withEqualAttributes: [.left, .right, .top, .bottom],
                 toItem: secondItem)
         )
     }
     
-    static func constraintsForItem(item: AnyObject, withEqualAttributes attributes: [NSLayoutAttribute], toItem: AnyObject) -> [NSLayoutConstraint] {
+    static func constraintsForItem(_ item: AnyObject, withEqualAttributes attributes: [NSLayoutAttribute], toItem: AnyObject) -> [NSLayoutConstraint] {
         return attributes.map {
             return NSLayoutConstraint(item: item, withEqualAttribute: $0, toItem: toItem)
         }
     }
     
     convenience init(item: AnyObject, withEqualAttribute attribute: NSLayoutAttribute, toItem: AnyObject) {
-        self.init(item: item, attribute: attribute, relatedBy: .Equal, toItem: toItem, attribute: attribute, multiplier: 1, constant: 0)
+        self.init(item: item, attribute: attribute, relatedBy: .equal, toItem: toItem, attribute: attribute, multiplier: 1, constant: 0)
     }
 }

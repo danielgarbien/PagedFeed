@@ -11,7 +11,7 @@ import Decodable
 
 extension User: Decodable {
     
-    static func decode(j: AnyObject) throws -> User {
+    static func decode(_ j: AnyObject) throws -> User {
         return try User(
             login: j => "login",
             score: j => "score",

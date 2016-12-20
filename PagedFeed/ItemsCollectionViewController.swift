@@ -18,17 +18,21 @@ class ItemsCollectionViewController<Item>: UIViewController {
     let preferredCellHeight: PreferredCellHeight
     let estimatedCellHeight: CGFloat
     
-    init(configureCell: ConfigureCell, estimatedCellHeight: CGFloat, preferredCellHeight: PreferredCellHeight) {
+    init(configureCell: @escaping ConfigureCell, estimatedCellHeight: CGFloat, preferredCellHeight: @escaping PreferredCellHeight) {
         self.configureCell = configureCell
         self.estimatedCellHeight = estimatedCellHeight
         self.preferredCellHeight = preferredCellHeight
         super.init(nibName: nil, bundle: nil)
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
-    func startFeed(@noescape loadClosureWithLimit: Int -> FeedResult<[Item]>.LoadPageBlock) {
+    func startFeed(_ loadClosureWithLimit: (Int) -> FeedResult<[Item]>.LoadPageBlock) {
         loadingStateMachine.startFeed { completion in
             let load = loadClosureWithLimit(pageLimit())
-            load(completion: completion)
+            load(completion)
         }
     }
     
@@ -42,41 +46,41 @@ class ItemsCollectionViewController<Item>: UIViewController {
     }
     
     // MARK: - Paging
-    private lazy var loadingStateMachine: LoadingFeedStateMachine<[Item]>! = LoadingFeedStateMachine(stateDidChange: self.handleLoadingStateChange)
+    fileprivate lazy var loadingStateMachine: LoadingFeedStateMachine<[Item]>! = LoadingFeedStateMachine(stateDidChange: self.handleLoadingStateChange)
     
-    private func handleLoadingStateChange(state: LoadingFeedState<[Item]>) {
+    fileprivate func handleLoadingStateChange(_ state: LoadingFeedState<[Item]>) {
         switch state {
-        case .Loading(true): resetCollection()
-        case .Succeed(let items): updateCollectionByAppendingItems(items)
+        case .loading(true): resetCollection()
+        case .succeed(let items): updateCollectionByAppendingItems(items)
         default: break
         }
         dataSource.footerView?.updateWithLoadingState(loadingStateMachine.state)
     }
     
-    private func pageLimit() -> Int {
+    fileprivate func pageLimit() -> Int {
         return layout.estimatedItemsCountWithEstimatedItemHeight(
             estimatedCellHeight, toFillContentSize: view.frame.size)
     }
     
     // MARK: - Collection view
-    private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: self.layout)
+    fileprivate lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.layout)
         collectionView.dataSource = self.dataSource
         collectionView.delegate = self.collectionViewDelegate
-        collectionView.keyboardDismissMode = .OnDrag
-        collectionView.backgroundColor = UIColor.whiteColor()
+        collectionView.keyboardDismissMode = .onDrag
+        collectionView.backgroundColor = UIColor.white
         return collectionView
     }()
     
     // MARK: - Collection view delegate
-    private lazy var collectionViewDelegate: UICollectionViewDelegate = {
+    fileprivate lazy var collectionViewDelegate: UICollectionViewDelegate = {
         return CollectionViewDelegate {
             self.loadingStateMachine.next()
         }
     }()
     
     // MARK: - Collection view layout
-    private lazy var layout: ItemsCollectionViewLayout = {
+    fileprivate lazy var layout: ItemsCollectionViewLayout = {
         let metrics = ColumnFeedMetrics(minColumnWidth: 120, interColumnSpacing: 16, interItemSpacing: 16, margin: 16)
         let layout = ItemsCollectionViewLayout(metrics: metrics) {
             return self.preferredCellHeight(self.dataSource.objectAtIndexPath($0))
@@ -85,7 +89,7 @@ class ItemsCollectionViewController<Item>: UIViewController {
     }()
     
     // MARK: - Collection view data source
-    private lazy var dataSource: ItemsCollectionViewDataSource<Item>
+    fileprivate lazy var dataSource: ItemsCollectionViewDataSource<Item>
         = ItemsCollectionViewDataSource(objects: [[]], configureCell: self.configureCell) { [unowned self] bottomView in
             bottomView.updateWithLoadingState(self.loadingStateMachine.state)
             bottomView.tryAgainBlock = { [weak self] in
@@ -100,11 +104,11 @@ private class CollectionViewDelegate: NSObject, UICollectionViewDelegate {
     
     let willDisplayLastCell: () -> Void
     
-    init(willDisplayLastCell: () -> Void) {
+    init(willDisplayLastCell: @escaping () -> Void) {
         self.willDisplayLastCell = willDisplayLastCell
     }
     
-    @objc func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    @objc func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if collectionView.lastItemIndexPath() == indexPath {
             willDisplayLastCell()
         }
@@ -120,7 +124,7 @@ private extension ItemsCollectionViewController {
         collectionView.reloadData()
     }
     
-    func updateCollectionByAppendingItems(items: [Item]) {
+    func updateCollectionByAppendingItems(_ items: [Item]) {
         guard dataSource.objects[0].count > 0 else {
             // if collection view has just been reset reload data with no animation
             // calling performBatchUpdates too quickly triggers internal UIKit assertion:
@@ -133,11 +137,11 @@ private extension ItemsCollectionViewController {
         collectionView.performBatchUpdates({
             
             let countBefore = self.dataSource.objects[0].count
-            self.dataSource.objects[0].appendContentsOf(items)
+            self.dataSource.objects[0].append(contentsOf: items)
             let countAfter = self.dataSource.objects[0].count
             
-            let indexPaths = (countBefore..<countAfter).map { NSIndexPath(forItem: $0, inSection: 0) }
-            self.collectionView.insertItemsAtIndexPaths(indexPaths)
+            let indexPaths = (countBefore..<countAfter).map { IndexPath(item: $0, section: 0) }
+            self.collectionView.insertItems(at: indexPaths)
             
             }, completion: nil)
     }

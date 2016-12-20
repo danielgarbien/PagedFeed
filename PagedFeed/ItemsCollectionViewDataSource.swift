@@ -11,26 +11,26 @@ import UIKit
 
 class ItemsCollectionViewDataSource<Item>: SimpleCollectionViewDataSource<ItemCollectionViewCell, Item> {
     
-    typealias ConfigureBottomViewBlock = ItemsCollectionBottomReusableView -> Void
+    typealias ConfigureBottomViewBlock = (ItemsCollectionBottomReusableView) -> Void
     typealias ConfigureCell = (ItemCollectionViewCell, Item) -> Void
 
-    private(set) var footerView: ItemsCollectionBottomReusableView?
+    fileprivate(set) var footerView: ItemsCollectionBottomReusableView?
     let configureBottomView: ConfigureBottomViewBlock
     
-    init(objects: [[Item]], configureCell: ConfigureCell, configureBottomView: ConfigureBottomViewBlock) {
+    init(objects: [[Item]], configureCell: @escaping ConfigureCell, configureBottomView: @escaping ConfigureBottomViewBlock) {
         self.configureBottomView = configureBottomView
-        super.init(objects: objects, cellType: .Nib) { (cell, object) in
+        super.init(objects: objects, cellType: .nib) { (cell, object) in
             configureCell(cell, object)
         }
     }
     
-    private var supplementaryRegistration = CollectionRegistrationState(resiterBlock: registerSupplementaryView)
+    fileprivate var supplementaryRegistration = CollectionRegistrationState(resiterBlock: registerSupplementaryView)
     
     // MARK: - UICollectionViewDataSource
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
         let identifier = supplementaryRegistration.reuseIdentifierForClass(ItemsCollectionBottomReusableView.self, inCollectionView: collectionView)
-        footerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: identifier, forIndexPath: indexPath) as? ItemsCollectionBottomReusableView
+        footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as? ItemsCollectionBottomReusableView
         configureBottomView(footerView!)
         return footerView!
     }
@@ -38,9 +38,9 @@ class ItemsCollectionViewDataSource<Item>: SimpleCollectionViewDataSource<ItemCo
 
 // MARK: - Registration functions
 
-private func registerSupplementaryView(collectionView: UICollectionView, viewClass: AnyClass) -> String {
-    let identifier = String(viewClass)
-    collectionView.registerNib(UINib(nibName: "ItemsCollectionBottomReusableView", bundle: nil),
+private func registerSupplementaryView(_ collectionView: UICollectionView, viewClass: AnyClass) -> String {
+    let identifier = String(describing: viewClass)
+    collectionView.register(UINib(nibName: "ItemsCollectionBottomReusableView", bundle: nil),
                                forSupplementaryViewOfKind: ItemsCollectionFooterSupplementaryKind,
                                withReuseIdentifier: identifier)
     return identifier

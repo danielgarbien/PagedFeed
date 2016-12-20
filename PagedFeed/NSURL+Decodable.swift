@@ -9,11 +9,11 @@
 import Foundation
 import Decodable
 
-extension NSURL: Decodable {
+extension URL: Decodable {
     
-    public static func decode(j: AnyObject) throws -> Self {
+    public static func decode(_ j: AnyObject) throws -> URL {
         guard let URL = self.init(string: try String.decode(j)) else {
-            throw StringInitializationError(type: j.dynamicType, object: j)
+            throw StringInitializationError(type: type(of: j), object: j)
         }
         return URL
     }

@@ -18,52 +18,52 @@ import Foundation
  */
 class SessionDelegate: NSObject {
     
-    let cacheTime: NSTimeInterval
+    let cacheTime: TimeInterval
     
-    init(cacheTime: NSTimeInterval) {
+    init(cacheTime: TimeInterval) {
         self.cacheTime = cacheTime
     }
     
-    typealias TaskCompletionHandler = (NSData?, NSURLResponse?, NSError?) -> Void
+    typealias TaskCompletionHandler = (Data?, URLResponse?, NSError?) -> Void
 
-    func setCompletionHandlerForTask(task: NSURLSessionDataTask, handler: TaskCompletionHandler) {
+    func setCompletionHandlerForTask(_ task: URLSessionDataTask, handler: @escaping TaskCompletionHandler) {
         completionHandlerForTask[task] = handler
     }
     
-    private var completionHandlerForTask = [NSURLSessionTask: TaskCompletionHandler]()
-    private var dataForTask = [NSURLSessionTask: NSMutableData?]()
+    fileprivate var completionHandlerForTask = [URLSessionTask: TaskCompletionHandler]()
+    fileprivate var dataForTask = [URLSessionTask: NSMutableData?]()
 }
 
-extension SessionDelegate: NSURLSessionTaskDelegate {
+extension SessionDelegate: URLSessionTaskDelegate {
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         let data = dataForTask[task] ?? nil
-        completionHandlerForTask[task]?(data, task.response, error)
+        completionHandlerForTask[task]?(data as Data?, task.response, error as NSError?)
         completionHandlerForTask[task] = nil
     }
 }
 
-extension SessionDelegate: NSURLSessionDataDelegate {
+extension SessionDelegate: URLSessionDataDelegate {
     
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let mutableData = dataForTask[dataTask] else {
-            dataForTask[dataTask] = NSMutableData(data: data)
+            dataForTask[dataTask] = NSData(data: data) as Data as Data
             return
         }
-        mutableData?.appendData(data)
+        mutableData?.append(data)
     }
     
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: (NSCachedURLResponse?) -> Void) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
         switch proposedResponse.response {
-        case let response as NSHTTPURLResponse:
+        case let response as HTTPURLResponse:
             var headers = response.allHeaderFields as! [String: String]
             headers["Cache-Control"] = "max-age=\(cacheTime)"
             
-            let modifiedResponse = NSHTTPURLResponse(URL: response.URL!,
+            let modifiedResponse = HTTPURLResponse(url: response.url!,
                                                      statusCode: response.statusCode,
-                                                     HTTPVersion: "HTTP/1.1",
+                                                     httpVersion: "HTTP/1.1",
                                                      headerFields: headers)
-            let modifiedCachedResponse = NSCachedURLResponse(response: modifiedResponse!,
+            let modifiedCachedResponse = CachedURLResponse(response: modifiedResponse!,
                                                              data: proposedResponse.data,
                                                              userInfo: proposedResponse.userInfo,
                                                              storagePolicy: proposedResponse.storagePolicy)

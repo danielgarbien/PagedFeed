@@ -10,5 +10,5 @@ import Foundation
 
 protocol DataAccess {
     
-    func usersWithQuery(q: String, sort: UsersResourceSort, pageSize: Int, completion: (FeedResult<[User]>) -> Void)
+    func usersWithQuery(_ q: String, sort: UsersResourceSort, pageSize: Int, completion: (FeedResult<[User]>) -> Void)
 }

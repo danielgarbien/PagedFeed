@@ -10,23 +10,23 @@ import Foundation
 
 extension ItemsCollectionBottomReusableView {
     
-    func updateWithLoadingState<T>(loadingState: LoadingFeedState<T>) {
+    func updateWithLoadingState<T>(_ loadingState: LoadingFeedState<T>) {
         switch loadingState {
-        case .Idle, .Succeed:
-            state = .Idle
-        case .Loading:
-            state = .InProgress
-        case .Failed(let error):
+        case .idle, .succeed:
+            state = .idle
+        case .loading:
+            state = .inProgress
+        case .failed(let error):
             switch error {
-            case SynchronizerError.WrongStatusError(403):
-                state = .TryAgain(message: "Non-authenticated requests rate limit exceeded.")
-            case SynchronizerError.URLSessionError(let other):
-                state = .TryAgain(message: other.localizedDescription)
+            case SynchronizerError.wrongStatusError(403):
+                state = .tryAgain(message: "Non-authenticated requests rate limit exceeded.")
+            case SynchronizerError.urlSessionError(let other):
+                state = .tryAgain(message: other.localizedDescription)
             default:
-                state = .TryAgain(message: "Something went wrong.")
+                state = .tryAgain(message: "Something went wrong.")
             }
-        case .Ended:
-            state = .TheEnd
+        case .ended:
+            state = .theEnd
         }
     }
 }

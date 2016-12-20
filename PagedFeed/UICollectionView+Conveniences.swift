@@ -11,12 +11,12 @@ import UIKit
 
 extension UICollectionView {
     
-    func lastItemIndexPath() -> NSIndexPath? {
-        var section = numberOfSections() - 1
+    func lastItemIndexPath() -> IndexPath? {
+        var section = numberOfSections - 1
         while section >= 0 {
-            let item = numberOfItemsInSection(section) - 1
+            let item = numberOfItems(inSection: section) - 1
             if item >= 0 {
-                return NSIndexPath(forItem: item, inSection: section)
+                return IndexPath(item: item, section: section)
             }
             section -= 1
         }

@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         window = UIWindow()
         window?.rootViewController = itemsViewController()
@@ -22,12 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-private let oneHour: NSTimeInterval = 60 * 60
+private let oneHour: TimeInterval = 60 * 60
 
 private extension AppDelegate {
     
     func itemsViewController() -> UIViewController {
-        let baseURL = NSURL(string: NSBundle.mainBundle().apiBaseUrl())!
+        let baseURL = URL(string: Bundle.main.apiBaseUrl())!
         let dataAccess = NetworkDataAccess(baseURL: baseURL, cacheTime: oneHour)
         let imageAccess = NetworkImageAccess(cacheTime: 24 * oneHour)
         return SearchUsersViewController(dataAccess: dataAccess, imageAccess: imageAccess)

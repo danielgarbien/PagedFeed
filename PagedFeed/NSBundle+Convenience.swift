@@ -8,13 +8,13 @@
 
 import Foundation
 
-extension NSBundle {
+extension Bundle {
     
     func apiBaseUrl() -> String {
         return infoValueForKey("MY_API_BASE_URL_ENDPOINT")!
     }
     
-    func infoValueForKey<Value>(key: String) -> Value? {
+    func infoValueForKey<Value>(_ key: String) -> Value? {
         return infoDictionary![key] as? Value
     }
 }

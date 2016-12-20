@@ -8,19 +8,19 @@
 
 import Foundation
 
-extension NSURLRequest {
+extension URLRequest {
     
-    convenience init?(baseURL: NSURL, path: String?, parameters: [String: AnyObject]?) {
-        let URL = baseURL.URLByAppendingPathComponent(path ?? "")
-        let components = NSURLComponents(URL: URL, resolvingAgainstBaseURL: false)
+    init?(baseURL: URL, path: String?, parameters: [String: AnyObject]?) {
+        let URL = baseURL.appendingPathComponent(path ?? "")
+        var components = URLComponents(url: URL, resolvingAgainstBaseURL: false)
         
-        components?.queryItems = parameters?.map { key, value -> NSURLQueryItem in
-            NSURLQueryItem(name: String(key), value: String(value))
+        components?.queryItems = parameters?.map { key, value -> URLQueryItem in
+            URLQueryItem(name: String(key), value: String(describing: value))
         }
         
-        guard let componentsURL = components?.URL else {
+        guard let componentsURL = components?.url else {
             return nil
         }
-        self.init(URL: componentsURL)
+        (self as NSURLRequest).init(url: componentsURL)
     }
 }

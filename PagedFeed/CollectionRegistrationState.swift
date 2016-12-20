@@ -9,26 +9,26 @@
 import Foundation
 import UIKit
 
-typealias RegisterBlock = (collectionView: UICollectionView, aClass: AnyClass) -> String // returns registered identifier
+typealias RegisterBlock = (_ collectionView: UICollectionView, _ aClass: AnyClass) -> String // returns registered identifier
 
 /**
  Helper enum to be used to register cell just once and than use it's identifier to dequeue from collection view.
  */
 enum CollectionRegistrationState {
-    case NotRegistered(RegisterBlock)
-    case Registered(identifier: String)
+    case notRegistered(RegisterBlock)
+    case registered(identifier: String)
     
-    init(resiterBlock: RegisterBlock) {
-        self = .NotRegistered(resiterBlock)
+    init(resiterBlock: @escaping RegisterBlock) {
+        self = .notRegistered(resiterBlock)
     }
     
-    mutating func reuseIdentifierForClass(cellClass: AnyClass, inCollectionView collectionView: UICollectionView) -> String {
+    mutating func reuseIdentifierForClass(_ cellClass: AnyClass, inCollectionView collectionView: UICollectionView) -> String {
         switch self {
-        case .NotRegistered(let register):
-            let identifier = register(collectionView: collectionView, aClass: cellClass)
-            self = .Registered(identifier: identifier)
+        case .notRegistered(let register):
+            let identifier = register(collectionView, cellClass)
+            self = .registered(identifier: identifier)
             return identifier
-        case .Registered(let identifier):
+        case .registered(let identifier):
             return identifier
         }
     }

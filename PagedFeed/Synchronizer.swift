@@ -9,39 +9,39 @@
 import Foundation
 
 protocol Resource {
-    func request() -> NSURLRequest
+    func request() -> URLRequest
     
     associatedtype ParsedObject
-    var parse: (NSData) throws -> ParsedObject { get }
+    var parse: (Data) throws -> ParsedObject { get }
 }
 
 enum SynchronizerResult<Result> {
-    case Success(Result)
-    case NoData
-    case Error(ErrorType) /// Might be SynchronizerError or parsing error thrown by Resource parse function
+    case success(Result)
+    case noData
+    case error(Error) /// Might be SynchronizerError or parsing error thrown by Resource parse function
 }
 
-enum SynchronizerError: ErrorType {
-    case WrongStatusError(status: Int)
-    case URLSessionError(NSError)
+enum SynchronizerError: Error {
+    case wrongStatusError(status: Int)
+    case urlSessionError(NSError)
 }
 
 
 class Synchronizer {
     
-    private lazy var session: NSURLSession! = NSURLSession(
+    fileprivate lazy var session: URLSession! = URLSession(
         configuration: self.sessionConfiguration,
         delegate: SessionDelegate(cacheTime: self.cacheTime),
-        delegateQueue: NSOperationQueue.mainQueue()
+        delegateQueue: OperationQueue.main
     )
-    private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
-    private let sessionConfiguration: NSURLSessionConfiguration
-    private let cacheTime: NSTimeInterval
+    fileprivate var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
+    fileprivate let sessionConfiguration: URLSessionConfiguration
+    fileprivate let cacheTime: TimeInterval
     
-    init(cacheTime: NSTimeInterval, URLCache: NSURLCache? = NSURLSessionConfiguration.defaultSessionConfiguration().URLCache) {
+    init(cacheTime: TimeInterval, URLCache: Foundation.URLCache? = URLSessionConfiguration.default.urlCache) {
         self.cacheTime = cacheTime
-        self.sessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        self.sessionConfiguration.URLCache = URLCache
+        self.sessionConfiguration = URLSessionConfiguration.default
+        self.sessionConfiguration.urlCache = URLCache
     }
     
     func cancelSession() {
@@ -51,21 +51,21 @@ class Synchronizer {
     
     typealias CancelLoading = () -> Void
     
-    func loadResource<R: Resource, Object where R.ParsedObject == Object>
-        (resource: R, completion: SynchronizerResult<Object> -> ()) -> CancelLoading {
+    func loadResource<R: Resource, Object>
+        (_ resource: R, completion: @escaping (SynchronizerResult<Object>) -> ()) -> CancelLoading where R.ParsedObject == Object {
         
-        func completeOnMainThread(result: SynchronizerResult<Object>) {
-            if case .Error = result { print(result) }
-            NSOperationQueue.mainQueue().addOperationWithBlock{ completion(result) }
+        func completeOnMainThread(_ result: SynchronizerResult<Object>) {
+            if case .error = result { print(result) }
+            OperationQueue.main.addOperation{ completion(result) }
         }
         
         let request = resource.request()
-        let task = session.dataTaskWithRequest(request)
+        let task = session.dataTask(with: request)
         print("Request: \(request)")
         sessionDelegate.setCompletionHandlerForTask(task) { (data, response, error) in
             
             guard error?.code != NSURLErrorCancelled else {
-                print("Request with URL: \(request.URL ?? "") was cancelled")
+                print("Request with URL: \(request.url ?? "") was cancelled")
                 return // cancel quitely
             }
 
@@ -75,16 +75,16 @@ class Synchronizer {
                 return
             }
             
-            guard let data = data where data.length > 0 else {
-                completeOnMainThread(.NoData)
+            guard let data = data, data.count > 0 else {
+                completeOnMainThread(.noData)
                 return
             }
 
             do {
                 let object = try resource.parse(data)
-                completeOnMainThread(.Success(object))
+                completeOnMainThread(.success(object))
             } catch {
-                completeOnMainThread(.Error(error))
+                completeOnMainThread(.error(error))
             }
         }
         task.resume()
@@ -97,13 +97,13 @@ class Synchronizer {
 
 private extension SynchronizerResult {
     
-    static func resultWithResponse(response: NSURLResponse?, error: NSError?) -> SynchronizerResult? {
+    static func resultWithResponse(_ response: URLResponse?, error: NSError?) -> SynchronizerResult? {
         guard error == nil else {
-            return Error(SynchronizerError.URLSessionError(error!))
+            return self.error(SynchronizerError.urlSessionError(error!))
         }
-        let statusCode = (response as! NSHTTPURLResponse).statusCode
+        let statusCode = (response as! HTTPURLResponse).statusCode
         guard 200..<300 ~= statusCode else {
-            return Error(SynchronizerError.WrongStatusError(status: statusCode))
+            return self.error(SynchronizerError.wrongStatusError(status: statusCode))
         }
         return nil
     }    

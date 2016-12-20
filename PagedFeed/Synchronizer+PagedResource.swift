@@ -10,11 +10,11 @@ import Foundation
 
 extension Synchronizer {
     
-    func loadPagedResource<R: PagedResource>(resource: R, pageSize: Int, completion: (FeedResult<R.ParsedObject>) -> Void) {
+    func loadPagedResource<R: PagedResource>(_ resource: R, pageSize: Int, completion: @escaping (FeedResult<R.ParsedObject>) -> Void) {
         loadPagedResource(resource, pageSize: pageSize, page: 0, completion: completion)
     }
     
-    private func loadPagedResource<R: PagedResource>(resource: R, pageSize: Int, page: Int, completion: (FeedResult<R.ParsedObject>) -> Void) {
+    fileprivate func loadPagedResource<R: PagedResource>(_ resource: R, pageSize: Int, page: Int, completion: @escaping (FeedResult<R.ParsedObject>) -> Void) {
         let resource = resource.resourceForPage(page, pageSize: pageSize)
         
         _ = loadResource(resource) { synchronizerResult in
@@ -25,25 +25,25 @@ extension Synchronizer {
                 self?.loadPagedResource(resource, pageSize: pageSize, page: page, completion: completion)
             }
             let endPage: FeedResult<R.ParsedObject>.LoadPageBlock = { completion in
-                completion(FeedResult<R.ParsedObject>.FeedEnd)
+                completion(FeedResult<R.ParsedObject>.feedEnd)
             }
             
             switch synchronizerResult {
-            case .Success(let result):
+            case .success(let result):
                 // strangely result must be casted to R.ParsedObject to be used as _ArrayType
                 switch (result as R.ParsedObject).count {
                 case 0:
-                    completion(.FeedEnd)
+                    completion(.feedEnd)
                 case 1..<pageSize:
                     // if there is less results on page than page limit, then the next page is FeedEnd
-                    completion(.Success(page: result, nextPage: endPage))
+                    completion(.success(page: result, nextPage: endPage))
                 default:
-                    completion(.Success(page: result, nextPage: nextPage))
+                    completion(.success(page: result, nextPage: nextPage))
                 }
-            case .NoData:
-                completion(.FeedEnd)
-            case .Error(let err):
-                completion(.Error(error: err, retry: retry))
+            case .noData:
+                completion(.feedEnd)
+            case .error(let err):
+                completion(.error(error: err, retry: retry))
             }
         }
     }

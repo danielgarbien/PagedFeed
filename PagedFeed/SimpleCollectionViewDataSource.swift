@@ -14,35 +14,35 @@ class SimpleCollectionViewDataSource<Cell: AnyObject, Object>: NSObject, UIColle
     
     var objects: [[Object]]
     
-    func objectAtIndexPath(indexPath: NSIndexPath) -> Object {
+    func objectAtIndexPath(_ indexPath: IndexPath) -> Object {
         return objects[indexPath.section][indexPath.row]
     }
     
     typealias ConfigureCellBlock = (Cell, Object) -> Void
 
-    init(objects: [[Object]], cellType: CellType, configureCell: ConfigureCellBlock) {
+    init(objects: [[Object]], cellType: CellType, configureCell: @escaping ConfigureCellBlock) {
         self.objects = objects
         self.configureCell = configureCell
         cellRegistration = CollectionRegistrationState(resiterBlock: cellType.registerBlock())
     }
     
-    private let configureCell: ConfigureCellBlock
-    private var cellRegistration: CollectionRegistrationState
+    fileprivate let configureCell: ConfigureCellBlock
+    fileprivate var cellRegistration: CollectionRegistrationState
     
     // MARK: - UICollectionViewDataSource
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return objects.count
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return objects[section].count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(
-            cellRegistration.reuseIdentifierForClass(Cell.self, inCollectionView: collectionView),
-            forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: cellRegistration.reuseIdentifierForClass(Cell.self, inCollectionView: collectionView),
+            for: indexPath)
         configureCell(cell as! Cell, objectAtIndexPath(indexPath))
         return cell
     }
@@ -50,17 +50,17 @@ class SimpleCollectionViewDataSource<Cell: AnyObject, Object>: NSObject, UIColle
 
 
 enum CellType {
-    case Nib
-    case Class
+    case nib
+    case `class`
     
     func registerBlock() -> RegisterBlock {
         return { collectionView, cellClass -> String in
-            let identifier = String(cellClass)
+            let identifier = String(describing: cellClass)
             switch self {
-            case .Nib:
-                collectionView.registerNib(UINib(nibName: String(cellClass), bundle: nil), forCellWithReuseIdentifier: identifier)
-            case .Class:
-                collectionView.registerClass(cellClass, forCellWithReuseIdentifier: identifier)
+            case .nib:
+                collectionView.register(UINib(nibName: String(describing: cellClass), bundle: nil), forCellWithReuseIdentifier: identifier)
+            case .class:
+                collectionView.register(cellClass, forCellWithReuseIdentifier: identifier)
             }
             return identifier
         }

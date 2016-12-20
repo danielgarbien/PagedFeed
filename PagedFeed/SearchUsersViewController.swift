@@ -26,28 +26,28 @@ class SearchUsersViewController: UIViewController {
         addImmediatelyChildViewController(navController, embeddedInView: view)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateUsersVC()
     }
     
-    private let dataAccess: DataAccess
-    private let imageAccess: ImageAccess
+    fileprivate let dataAccess: DataAccess
+    fileprivate let imageAccess: ImageAccess
     
     // MARK: - Controllers
-    private lazy var usersVC: UsersCollectionViewController
+    fileprivate lazy var usersVC: UsersCollectionViewController
         = UsersCollectionViewController(searchBar: self.searchBar(),
                                         switchControl: self.userTypeSwitch(),
                                         imageAccess: self.imageAccess)
-    private lazy var navController: UINavigationController
+    fileprivate lazy var navController: UINavigationController
         = UINavigationController(rootViewController: self.usersVC,
                                  hidesBarsOnSwipe: true)
     
     // MARK: - Search
-    private var searchTerm: String? {
+    fileprivate var searchTerm: String? {
         didSet { updateUsersVC() }
     }
-    private var usersSort: UsersResourceSort = .BestMatch {
+    fileprivate var usersSort: UsersResourceSort = .bestMatch {
         didSet { updateUsersVC() }
     }
 }
@@ -55,13 +55,13 @@ class SearchUsersViewController: UIViewController {
 private extension SearchUsersViewController {
     
     func updateUsersVC() {
-        guard let searchTerm = searchTerm where searchTerm.characters.count > 0 else {
+        guard let searchTerm = searchTerm, searchTerm.characters.count > 0 else {
             usersVC.reset()
             return
         }
         usersVC.startFeed { limit -> FeedResult<[User]>.LoadPageBlock in
             // knowing page limit desired by Items VC, create load function and pass to Items VC
-            func load(completion: (FeedResult<[User]> -> Void)) {
+            func load(_ completion: ((FeedResult<[User]>) -> Void)) {
                 dataAccess.usersWithQuery(
                     searchTerm,
                     sort: usersSort,
@@ -78,13 +78,13 @@ extension SearchUsersViewController: UISearchBarDelegate {
     func searchBar() -> UISearchBar {
         let searchBar = UISearchBar()
         searchBar.delegate = self
-        searchBar.autocapitalizationType = .None
+        searchBar.autocapitalizationType = .none
         searchBar.tintColor = UIColor.myGreyColor()
         searchBar.placeholder = "Search"
         return searchBar
     }
     
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchTerm = searchText
     }
 }
@@ -94,14 +94,14 @@ private extension SearchUsersViewController {
     func userTypeSwitch() -> UISwitch {
         let switchControl = UISwitch()
         switchControl.onTintColor = UIColor.myRedColor()
-        switchControl.on = .ByFollowers ~= usersSort
-        switchControl.addTarget(self, action: #selector(SearchUsersViewController.switchChanged(_:)), forControlEvents: .ValueChanged)
+        switchControl.isOn = .byFollowers ~= usersSort
+        switchControl.addTarget(self, action: #selector(SearchUsersViewController.switchChanged(_:)), for: .valueChanged)
         return switchControl
     }
     
-    @objc func switchChanged(sender: UISwitch) {
+    @objc func switchChanged(_ sender: UISwitch) {
         usersVC.updateWithSwitchChanged(sender)
-        usersSort = sender.on ? .ByFollowers : .BestMatch
+        usersSort = sender.isOn ? .byFollowers : .bestMatch
     }
 }
 
@@ -114,8 +114,8 @@ private extension UsersCollectionViewController {
         updateWithSwitchChanged(switchControl)
     }
     
-    func updateWithSwitchChanged(switchControl: UISwitch) {
-        navigationItem.prompt = switchControl.on ? "Sort by followers" : "Best match"
+    func updateWithSwitchChanged(_ switchControl: UISwitch) {
+        navigationItem.prompt = switchControl.isOn ? "Sort by followers" : "Best match"
     }
 }
 

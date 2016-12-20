@@ -14,42 +14,42 @@ let ItemsCollectionFooterSupplementaryKind = "ItemsCollectionFooterSupplementary
 
 class ItemsCollectionViewLayout: ColumnFeedCollectionViewLayout {
     
-    private static let bottomSupplementaryViewIndexPath: NSIndexPath = NSIndexPath(index: 0)
+    fileprivate static let bottomSupplementaryViewIndexPath: IndexPath = IndexPath(index: 0)
     
-    private var bottomSupplementaryViewAtt: UICollectionViewLayoutAttributes!
+    fileprivate var bottomSupplementaryViewAtt: UICollectionViewLayoutAttributes!
     
     // MARK: - Overridden
     
-    override func prepareLayout() {
-        super.prepareLayout()
+    override func prepare() {
+        super.prepare()
         
         bottomSupplementaryViewAtt = UICollectionViewLayoutAttributes(
             forSupplementaryViewOfKind: ItemsCollectionFooterSupplementaryKind,
-            withIndexPath: ItemsCollectionViewLayout.bottomSupplementaryViewIndexPath)
+            with: ItemsCollectionViewLayout.bottomSupplementaryViewIndexPath)
         
         let superContentSize = super.collectionViewContentSize()
         bottomSupplementaryViewAtt.frame = CGRect(
             x: 0, y: superContentSize.height, width: superContentSize.width, height: 44)
     }
     
-    override func collectionViewContentSize() -> CGSize {
+    override var collectionViewContentSize : CGSize {
         let superContentSize = super.collectionViewContentSize()
         return CGSize(width: superContentSize.width,
                       height: superContentSize.height + bottomSupplementaryViewAtt.frame.height)
     }
     
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let superAttributes = super.layoutAttributesForElementsInRect(rect) ?? []
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        let superAttributes = super.layoutAttributesForElements(in: rect) ?? []
         guard bottomSupplementaryViewAtt.frame.intersects(rect) else {
             return superAttributes
         }
         return [bottomSupplementaryViewAtt] + superAttributes
     }
     
-    override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         guard elementKind == ItemsCollectionFooterSupplementaryKind
             && indexPath == ItemsCollectionViewLayout.bottomSupplementaryViewIndexPath else {
-                return super.layoutAttributesForSupplementaryViewOfKind(elementKind, atIndexPath: indexPath)
+                return super.layoutAttributesForSupplementaryView(ofKind: elementKind, at: indexPath)
         }
         return bottomSupplementaryViewAtt
     }

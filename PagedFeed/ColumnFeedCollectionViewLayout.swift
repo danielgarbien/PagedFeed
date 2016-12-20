@@ -18,17 +18,17 @@ struct ColumnFeedMetrics {
 
 class ColumnFeedCollectionViewLayout: UICollectionViewLayout {
     
-    typealias ItemHeightAtIndexPath = NSIndexPath -> CGFloat
+    typealias ItemHeightAtIndexPath = (IndexPath) -> CGFloat
     let itemHeight: ItemHeightAtIndexPath
     let metrics: ColumnFeedMetrics
     
-    init(metrics: ColumnFeedMetrics, itemHeight: ItemHeightAtIndexPath ) {
+    init(metrics: ColumnFeedMetrics, itemHeight: @escaping ItemHeightAtIndexPath ) {
         self.metrics = metrics
         self.itemHeight = itemHeight
         super.init()
     }
     
-    func estimatedItemsCountWithEstimatedItemHeight(height: CGFloat, toFillContentSize size: CGSize) -> Int {
+    func estimatedItemsCountWithEstimatedItemHeight(_ height: CGFloat, toFillContentSize size: CGSize) -> Int {
         var layoutMetrics = ColumnLayoutMetrics(feedMetrics: metrics, width: size.width)
         let horizontal = layoutMetrics.columnsCount
         let vertical = Int(size.height / (height + metrics.interItemSpacing)) + 1
@@ -39,23 +39,23 @@ class ColumnFeedCollectionViewLayout: UICollectionViewLayout {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private lazy var attributes: [NSIndexPath: UICollectionViewLayoutAttributes]! = [NSIndexPath: UICollectionViewLayoutAttributes]()
-    private var columns: Columns!
+    fileprivate lazy var attributes: [IndexPath: UICollectionViewLayoutAttributes]! = [IndexPath: UICollectionViewLayoutAttributes]()
+    fileprivate var columns: Columns!
 
     // MARK: - Overridden
-    override func prepareLayout() {
-        super.prepareLayout()
+    override func prepare() {
+        super.prepare()
         
         columns = Columns(metrics: ColumnLayoutMetrics(feedMetrics: metrics, width: collectionView!.frame.width))
         
         collectionView!.indexPaths().forEach { indexPath in
-            let att = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
+            let att = UICollectionViewLayoutAttributes(forCellWith: indexPath)
             att.frame = columns.addItemWithHeight(itemHeight(indexPath))
             attributes[indexPath] = att
         }
     }
     
-    override func collectionViewContentSize() -> CGSize {
+    override var collectionViewContentSize : CGSize {
         return columns.size()
     }
     
@@ -64,28 +64,28 @@ class ColumnFeedCollectionViewLayout: UICollectionViewLayout {
         attributes = nil
     }
     
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         return attributes.values.filter({
             $0.frame.intersects(rect)
         })
     }
     
-    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         return attributes[indexPath]
     }
     
-    override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
-        return !CGSizeEqualToSize(collectionView!.bounds.size, newBounds.size)
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return !collectionView!.bounds.size.equalTo(newBounds.size)
     }
 }
 
 private extension UICollectionView {
     
-    func indexPaths() -> [NSIndexPath] {
-        var indexPaths = [NSIndexPath]()
-        for section in 0..<numberOfSections() {
-            for item in 0..<numberOfItemsInSection(section) {
-                indexPaths.append(NSIndexPath(forItem: item, inSection: section))
+    func indexPaths() -> [IndexPath] {
+        var indexPaths = [IndexPath]()
+        for section in 0..<numberOfSections {
+            for item in 0..<numberOfItems(inSection: section) {
+                indexPaths.append(IndexPath(item: item, section: section))
             }
         }
         return indexPaths
@@ -165,15 +165,15 @@ private class Columns {
         }
     }
     
-    func addItemWithHeight(height: CGFloat) -> CGRect {
-        let lowestColumn = columns.sort { c1, c2 -> Bool in
+    func addItemWithHeight(_ height: CGFloat) -> CGRect {
+        let lowestColumn = columns.sorted { c1, c2 -> Bool in
             c1.nextItemOrigin().y < c2.nextItemOrigin().y
         }.first!
         return lowestColumn.addItemWithHeight(height)
     }
     
     func size() -> CGSize {
-        let highestColumn = columns.sort { c1, c2 -> Bool in
+        let highestColumn = columns.sorted { c1, c2 -> Bool in
             c1.nextItemOrigin().y > c2.nextItemOrigin().y
         }.first!
         return CGSize(width: metrics.width,
@@ -194,7 +194,7 @@ private class Column {
     let spacing: CGFloat
     var itemRects = [CGRect]()
     
-    func addItemWithHeight(height: CGFloat) -> CGRect {
+    func addItemWithHeight(_ height: CGFloat) -> CGRect {
         let origin = nextItemOrigin()
         let itemRect = CGRect(origin: origin,
                               size: CGSize(width: width, height: height))

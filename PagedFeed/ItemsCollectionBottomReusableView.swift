@@ -11,22 +11,22 @@ import UIKit
 class ItemsCollectionBottomReusableView: UICollectionReusableView {
 
     enum State {
-        case Idle
-        case InProgress
-        case TheEnd
-        case TryAgain(message: String)
+        case idle
+        case inProgress
+        case theEnd
+        case tryAgain(message: String)
     }
     
-    var state: State = .Idle {
+    var state: State = .idle {
         didSet {
             allOutlets.forEach{ $0.alpha = 0 }
             switch state {
-            case .Idle: break
-            case .InProgress: activityIndicator.alpha = 1
-            case .TheEnd: theEndLabel.alpha = 1
-            case .TryAgain(let message):
+            case .idle: break
+            case .inProgress: activityIndicator.alpha = 1
+            case .theEnd: theEndLabel.alpha = 1
+            case .tryAgain(let message):
                 tryAgainButton.alpha = 1
-                tryAgainButton.setAttributedTitle(tryAgainAttributedTitleWithMessage(message, font: tryAgainButton.titleLabel!.font), forState: .Normal)
+                tryAgainButton.setAttributedTitle(tryAgainAttributedTitleWithMessage(message, font: tryAgainButton.titleLabel!.font), for: UIControlState())
             }
         }
     }
@@ -35,15 +35,15 @@ class ItemsCollectionBottomReusableView: UICollectionReusableView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        state = .Idle
+        state = .idle
     }
     
-    private var allOutlets: [UIView] {
+    fileprivate var allOutlets: [UIView] {
         return [activityIndicator, theEndLabel, tryAgainButton]
     }
-    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet private weak var theEndLabel: UILabel!
-    @IBOutlet private weak var tryAgainButton: UIButton!
+    @IBOutlet fileprivate weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet fileprivate weak var theEndLabel: UILabel!
+    @IBOutlet fileprivate weak var tryAgainButton: UIButton!
 }
 
 private extension ItemsCollectionBottomReusableView {
@@ -52,11 +52,11 @@ private extension ItemsCollectionBottomReusableView {
         tryAgainBlock?()
     }
     
-    func tryAgainAttributedTitleWithMessage(message: String, font: UIFont) -> NSAttributedString {
+    func tryAgainAttributedTitleWithMessage(_ message: String, font: UIFont) -> NSAttributedString {
         let mutableString = NSMutableAttributedString(
             string: message,
             attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.myGreyColor()])
-        mutableString.appendAttributedString(NSAttributedString(
+        mutableString.append(NSAttributedString(
             string: " Try again.",
             attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.myRedColor()])
         )

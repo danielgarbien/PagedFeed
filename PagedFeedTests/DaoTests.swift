@@ -20,7 +20,7 @@ class DaoTests: XCTestCase {
     
     func testSingleQuery() {
         
-        let expectation = expectationWithDescription("all items retrieved")
+        let expectation = self.expectation(description: "all items retrieved")
         
         dao.usersWithQuery("d", sort: .BestMatch, pageSize: 10) { (feedResult) in
             if case .Success = feedResult {
@@ -30,7 +30,7 @@ class DaoTests: XCTestCase {
             }
         }
 
-        waitForExpectationsWithTimeout(60, handler: nil)
+        waitForExpectations(timeout: 60, handler: nil)
     }
     
     func testQuietCancelation() {
@@ -48,20 +48,20 @@ class DaoTests: XCTestCase {
     func testCachePerformance() {
         
         func loadSingleQuery() {
-            let expectation = expectationWithDescription("random request loaded")
+            let expectation = self.expectation(description: "random request loaded")
             dao.usersWithQuery("daniel", sort: .BestMatch, pageSize: 10) {result in
                 if case .Success = result {
                     expectation.fulfill()
                 }
             }
-            waitForExpectationsWithTimeout(60, handler: nil)
+            waitForExpectations(timeout: 60, handler: nil)
         }
         
         // first time run of a query should actualy connect with API
         loadSingleQuery()
 
         // second run should return with results from cache
-        measureBlock {
+        measure {
             loadSingleQuery()
         }
     }

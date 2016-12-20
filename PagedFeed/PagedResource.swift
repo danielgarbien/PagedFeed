@@ -13,5 +13,5 @@ protocol PagedResource: Resource {
     // PagedResource must return array of objects
     associatedtype ParsedObject: _ArrayType
     
-    func resourceForPage(page: Int, pageSize: Int) -> Self
+    func resourceForPage(_ page: Int, pageSize: Int) -> Self
 }

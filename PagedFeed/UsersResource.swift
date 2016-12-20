@@ -10,7 +10,7 @@ import Foundation
 import Decodable
 
 struct UsersResource {
-    let baseURL: NSURL
+    let baseURL: URL
     let q: String
     let sort: UsersResourceSort
     let page: Int?
@@ -18,13 +18,13 @@ struct UsersResource {
 }
 
 enum UsersResourceSort {
-    case BestMatch
-    case ByFollowers
+    case bestMatch
+    case byFollowers
     
-    private var param: AnyObject? {
+    fileprivate var param: AnyObject? {
         switch self {
-        case .BestMatch: return nil
-        case .ByFollowers: return "followers"
+        case .bestMatch: return nil
+        case .byFollowers: return "followers" as AnyObject?
         }
     }
 }
@@ -33,25 +33,25 @@ private extension UsersResource {
     
     var parameters: [String: AnyObject] {
         var param = [String: AnyObject]()
-        param["q"] = q
+        param["q"] = q as AnyObject?
         param["sort"] = sort.param
-        param["page"] = page
-        param["per_page"] = pageSize
+        param["page"] = page as AnyObject?
+        param["per_page"] = pageSize as AnyObject?
         return param
     }
 }
 
 extension UsersResource: Resource {
 
-    func request() -> NSURLRequest {
-        return NSURLRequest(baseURL: baseURL,
-                            path: "search/users",
-                            parameters: parameters)!
+    func request() -> URLRequest {
+        return URLRequest(url: baseURL,
+                            cachePolicy: "search/users",
+                            timeoutInterval: parameters)!
     }
     
-    var parse: (NSData) throws -> [User] {
+    var parse: (Data) throws -> [User] {
         return { data in
-            let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+            let json = try JSONSerialization.jsonObject(with: data, options: [])
             return try json => "items"
         }
     }

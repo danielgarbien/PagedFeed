@@ -13,5 +13,5 @@ typealias CancelImageLoading = () -> Void
 
 protocol ImageAccess {    
     
-    func imageWithURL(URL: NSURL, completion: UIImage? -> Void) -> CancelImageLoading
+    func imageWithURL(_ URL: URL, completion: (UIImage?) -> Void) -> CancelImageLoading
 }

@@ -10,16 +10,16 @@ import Foundation
 import UIKit
 
 struct ImageResource {
-    let URL: NSURL
+    let URL: Foundation.URL
 }
 
 extension ImageResource: Resource {
     
-    func request() -> NSURLRequest {
-        return NSURLRequest(URL: URL)
+    func request() -> URLRequest {
+        return URLRequest(url: URL)
     }
     
-    var parse: (NSData) throws -> UIImage? {
+    var parse: (Data) throws -> UIImage? {
         return { data in
             UIImage(data: data)
         }

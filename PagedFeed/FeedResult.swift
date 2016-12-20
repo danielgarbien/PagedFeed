@@ -14,9 +14,9 @@ import Foundation
  With success/error results it provides convenient blocks for loading nextPage/retry operations.
  */
 enum FeedResult<Page> {
-    case Success(page: Page, nextPage: LoadPageBlock)
-    case FeedEnd
-    case Error(error: ErrorType, retry: LoadPageBlock)
+    case success(page: Page, nextPage: LoadPageBlock)
+    case feedEnd
+    case error(error: Error, retry: LoadPageBlock)
     
-    typealias LoadPageBlock = (completion: FeedResult<Page> -> Void) -> Void
+    typealias LoadPageBlock = (_ completion: (FeedResult<Page>) -> Void) -> Void
 }

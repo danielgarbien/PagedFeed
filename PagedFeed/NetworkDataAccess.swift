@@ -10,10 +10,10 @@ import Foundation
 
 class NetworkDataAccess {
     
-    private let synchronizer: Synchronizer
-    private let baseURL: NSURL
+    fileprivate let synchronizer: Synchronizer
+    fileprivate let baseURL: URL
     
-    init(baseURL: NSURL, cacheTime: NSTimeInterval) {
+    init(baseURL: URL, cacheTime: TimeInterval) {
         self.baseURL = baseURL
         self.synchronizer = Synchronizer(cacheTime: cacheTime)
     }
@@ -22,7 +22,7 @@ class NetworkDataAccess {
 extension NetworkDataAccess: DataAccess {
     
     /// Error case result in completion block (if thrown) origins from Synchronizer
-    func usersWithQuery(q: String, sort: UsersResourceSort, pageSize: Int, completion: (FeedResult<[User]>) -> Void) {
+    func usersWithQuery(_ q: String, sort: UsersResourceSort, pageSize: Int, completion: (FeedResult<[User]>) -> Void) {
         // cancel previous session
         synchronizer.cancelSession()
         
@@ -35,7 +35,7 @@ extension UsersResource: PagedResource {
     
     typealias ParsedObject = [User]
     
-    func resourceForPage(page: Int, pageSize: Int) -> UsersResource {
+    func resourceForPage(_ page: Int, pageSize: Int) -> UsersResource {
         return UsersResource(
             baseURL: baseURL,
             q: q,

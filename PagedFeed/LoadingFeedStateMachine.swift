@@ -9,11 +9,11 @@
 import UIKit
 
 enum LoadingFeedState<Page> {
-    case Idle
-    case Loading(initial: Bool)
-    case Succeed(page: Page)
-    case Failed(error: ErrorType)
-    case Ended
+    case idle
+    case loading(initial: Bool)
+    case succeed(page: Page)
+    case failed(error: Error)
+    case ended
 }
 
 
@@ -31,42 +31,42 @@ enum LoadingFeedState<Page> {
  */
 class LoadingFeedStateMachine<Page> {
     
-    private(set) var state: LoadingFeedState<Page> = .Idle {
+    fileprivate(set) var state: LoadingFeedState<Page> = .idle {
         didSet { stateDidChange(state) }
     }
     
-    init(stateDidChange: LoadingFeedState<Page> -> Void) {
+    init(stateDidChange: @escaping (LoadingFeedState<Page>) -> Void) {
         self.stateDidChange = stateDidChange
     }
     
-    func startFeed(@noescape load: FeedResult<Page>.LoadPageBlock) {
-        state = .Loading(initial: true)
-        load(completion: handleFeedResult)
+    func startFeed(_ load: FeedResult<Page>.LoadPageBlock) {
+        state = .loading(initial: true)
+        load(handleFeedResult)
     }
     
     func next() {
         guard let loadNext = loadNext else {
             return
         }
-        state = .Loading(initial: false)
-        loadNext(completion: handleFeedResult)
+        state = .loading(initial: false)
+        loadNext(handleFeedResult)
         self.loadNext = nil
     }
     
-    private var loadNext: FeedResult<Page>.LoadPageBlock?
-    private let stateDidChange: LoadingFeedState<Page> -> Void
+    fileprivate var loadNext: FeedResult<Page>.LoadPageBlock?
+    fileprivate let stateDidChange: (LoadingFeedState<Page>) -> Void
     
-    private func handleFeedResult(result: FeedResult<Page>) {
+    fileprivate func handleFeedResult(_ result: FeedResult<Page>) {
         switch result {
-        case .Success(let page, let nextPage):
+        case .success(let page, let nextPage):
             loadNext = nextPage
-            state = .Succeed(page: page)
-        case .Error(let message, let retry):
+            state = .succeed(page: page)
+        case .error(let message, let retry):
             loadNext = retry
-            state = .Failed(error: message)
-        case .FeedEnd:
+            state = .failed(error: message)
+        case .feedEnd:
             loadNext = nil
-            state = .Ended
+            state = .ended
         }
     }
 }

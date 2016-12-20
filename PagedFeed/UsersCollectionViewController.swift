@@ -27,8 +27,8 @@ class UsersCollectionViewController: ItemsCollectionViewController<User> {
 
 private extension ItemCollectionViewCell {
     
-    func configureWithUser(user: User, imageAccess: ImageAccess) {
-        bottomSubtitle.text = String(user.type)
+    func configureWithUser(_ user: User, imageAccess: ImageAccess) {
+        bottomSubtitle.text = String(describing: user.type)
         bottomTitle.text = user.login
         
         let cancelImageLoading = imageAccess.imageWithURL(user.avatarURL) { [weak self] (image) in
@@ -40,7 +40,7 @@ private extension ItemCollectionViewCell {
         }
     }
     
-    static func preferredHeightWithUser(user: User) -> CGFloat {
+    static func preferredHeightWithUser(_ user: User) -> CGFloat {
         return CGFloat(user.score) * 5 + 64
     }
     

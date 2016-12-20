@@ -12,7 +12,7 @@ import XCTest
 private struct Color: Decodable {
     let name: String
     
-    private static func decode(json: AnyObject) throws -> Color {
+    static func decode(_ json: Any) throws -> Color {
         return try Color(name: json => "name")
     }
 }
@@ -21,7 +21,7 @@ private struct Apple: Decodable {
     let id: Int
     let color: Color?
     
-    private static func decode(json: AnyObject) throws -> Apple {
+    static func decode(_ json: Any) throws -> Apple {
         return try Apple(id: json => "id", color: json => "color")
     }
 }
@@ -29,7 +29,7 @@ private struct Apple: Decodable {
 private struct Tree: Decodable {
     let apples: [Apple]
     
-    private static func decode(json: AnyObject) throws -> Tree {
+    static func decode(_ json: Any) throws -> Tree {
         return try Tree(apples: json => "apples")
     }
 }
@@ -41,9 +41,9 @@ class ErrorPathTests: XCTestCase {
         let dict: NSDictionary = ["object": ["repo": ["owner": ["id" : 1, "login": "anviking"]]]]
         
         do {
-            try dict => "object" => "repo" => "owner" => "oops" as String
-        } catch let error as MissingKeyError {
-            XCTAssertEqual(error.formattedPath, "object.repo.owner")
+            _ = try dict => "object" => "repo" => "owner" => "oops" as String
+        } catch DecodingError.missingKey(_ , let metadata) {
+            XCTAssertEqual(metadata.formattedPath, "object.repo.owner")
         } catch let error {
             XCTFail("should not throw this exception: \(error)")
         }
@@ -56,7 +56,7 @@ class ErrorPathTests: XCTestCase {
             let apple = try Apple.decode(dict)
             print(apple)
             XCTFail()
-        } catch let error as TypeMismatchError where error.object is NSNull {
+        } catch DecodingError.typeMismatch(_, _, let metadata) where metadata.object is NSNull {
             
         } catch let error {
             XCTFail("should not throw this exception: \(error)")
@@ -68,11 +68,11 @@ class ErrorPathTests: XCTestCase {
         let dict: NSDictionary = ["object": ["repo": ["owner": ["id" : 1, "login": 0]]]]
         
         do {
-            try dict => "object" => "repo" => "owner" => "login" as String
-        } catch let error as TypeMismatchError {
-            XCTAssertEqual(String(error.receivedType), "__NSCFNumber")
-            XCTAssertEqual(error.formattedPath, "object.repo.owner.login")
-            XCTAssertEqual(error.object as? Int, 0)
+            _ = try dict => "object" => "repo" => "owner" => "login" as String
+        } catch let DecodingError.typeMismatch(_, actual, metadata) {
+            XCTAssertEqual(String(describing: actual), "_SwiftTypePreservingNSNumber")
+            XCTAssertEqual(metadata.formattedPath, "object.repo.owner.login")
+            XCTAssertEqual(metadata.object as? Int, 0)
         } catch let error {
             XCTFail("should not throw this exception: \(error)")
         }
@@ -83,11 +83,11 @@ class ErrorPathTests: XCTestCase {
             ["id": 2, "color": ["name": "green"]],
             ["id": 2, "color": ["name": 3]]]]
         do {
-            try Tree.decode(dict)
+            _ = try Tree.decode(dict)
             XCTFail()
-        } catch let error as TypeMismatchError {
-            XCTAssertEqual(String(error.receivedType), "__NSCFNumber")
-            XCTAssertEqual(error.formattedPath, "apples.color.name")
+        } catch let DecodingError.typeMismatch(_, actual, metadata) {
+            XCTAssertEqual(String(describing: actual), "_SwiftTypePreservingNSNumber")
+            XCTAssertEqual(metadata.formattedPath, "apples.color.name")
         } catch let error {
             XCTFail("should not throw this exception: \(error)")
         }
@@ -96,17 +96,17 @@ class ErrorPathTests: XCTestCase {
     
     func testFoo() {
         let dictionary: NSDictionary = ["key": ["test": 3]]
-        let a: Int = try! uppercase(dictionary => "key" as! NSDictionary) as AnyObject => "TEST"
+        let a: Int = try! uppercase(dictionary => "key") => "TEST"
         XCTAssertEqual(a, 3)
     }
     
-    private func uppercase(json: NSDictionary) -> NSDictionary {
-        var result = [String: AnyObject]()
+    private func uppercase(_ json: NSDictionary) -> NSDictionary {
+        var result = [String: Any]()
         for (key, value) in json {
-            result[key.uppercaseString] = value
+            result[(key as! String).uppercased()] = value
         }
         print(result)
-        return result
+        return result as NSDictionary
     }
     
 }

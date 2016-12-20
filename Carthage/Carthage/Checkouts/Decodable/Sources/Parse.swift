@@ -8,54 +8,82 @@
 
 import Foundation
 
-/// Use reduce to traverse through a nested dictionary and find the object at a given path
-func parse(json: AnyObject, _ path: [String]) throws -> AnyObject {
-    return try path.reduce((json, []), combine: { (a:(object: AnyObject, currentPath: [String]), key: String) in
-        let currentDict = try NSDictionary.decode(a.object)
-        guard let result = currentDict[NSString(string: key)] else {
-            var error = MissingKeyError(key: key, object: currentDict)
-            error.path = a.currentPath
-            error.rootObject = json
-            throw error
+func parse(_ json: Any, _ keyPath: KeyPath) throws -> Any {
+    var currentDict = json
+    
+    for (index, key) in keyPath.keys.enumerated() {
+        guard let result = try NSDictionary.decode(currentDict)[key] else {
+            let currentPath = keyPath.keys[0 ..< index]
+            let metadata = DecodingError.Metadata(path: Array(currentPath), object: currentDict, rootObject: json)
+            throw DecodingError.missingKey(key, metadata)
         }
         
-        var path = a.currentPath
-        path.append(key)
-        return (result, path)
-    }).object
-}
-
-public func parse<T>(json: AnyObject, path: [String], decode: (AnyObject throws -> T)) throws -> T {
-    let object = try parse(json, path)
-    return try catchAndRethrow(json, path) { try decode(object) }
-}
-
-/// Accepts null and MissingKeyError
-func parseAndAcceptMissingKey<T>(json: AnyObject, path: [String], decode: (AnyObject throws -> T)) throws -> T? {
-    guard let object = try catchMissingKeyAndReturnNil({ try parse(json, path) }) else {
-        return nil
+        currentDict = result
     }
-    return try catchAndRethrow(json, path) { try catchNull(decode)(object) }
+    
+    return currentDict
+}
+
+func parse(_ json: Any, _ path: OptionalKeyPath) throws -> Any? {
+    var currentDict = json
+    
+    for (index, key) in path.keys.enumerated() {
+        guard let result = try NSDictionary.decode(currentDict)[key.key] else {
+            if key.isRequired {
+                let currentPath = path.keys[0 ..< index].map { $0.key }
+                let metadata = DecodingError.Metadata(path: currentPath, object: currentDict, rootObject: json)
+                throw DecodingError.missingKey(key.key, metadata)
+            } else {
+                return nil
+            }
+        }
+        currentDict = result
+    }
+    
+    return currentDict
+}
+public func parse<T>(_ json: Any, keyPath: KeyPath, decoder: ((Any) throws -> T)) throws -> T {
+    let object = try parse(json, keyPath)
+    return try catchAndRethrow(json, keyPath) { try decoder(object) }
+}
+
+// FIXME: Should perhaps not return T?, but this way we don't have to flatMap in certain overloads
+public func parse<T>(_ json: Any, keyPath: OptionalKeyPath, decoder: ((Any) throws -> T?)) throws -> T? {
+    guard let object = try parse(json, keyPath) else { return nil }
+    return try catchAndRethrow(json, keyPath) { try decoder(object) }
 }
 
 
 // MARK: - Helpers
 
-func catchMissingKeyAndReturnNil<T>(closure: Void throws -> T) throws -> T? {
+func catchMissingKeyAndReturnNil<T>(_ closure: (Void) throws -> T) throws -> T? {
     do {
         return try closure()
-    } catch is MissingKeyError {
+    } catch DecodingError.missingKey {
         return nil
     }
 }
 
-func catchAndRethrow<T>(json: AnyObject, _ path: [String], block: Void throws -> T) throws -> T {
+func catchAndRethrow<T>(_ json: Any, _ keyPath: KeyPath, block: (Void) throws -> T) throws -> T {
     do {
         return try block()
     } catch let error as DecodingError {
         var error = error
-        error.path = path + error.path
-        error.rootObject = json
+        error.metadata.path = keyPath.keys + error.metadata.path
+        error.metadata.rootObject = json
+        throw error
+    } catch let error {
+        throw error
+    }
+}
+
+func catchAndRethrow<T>(_ json: Any, _ keyPath: OptionalKeyPath, block: (Void) throws -> T) throws -> T {
+    do {
+        return try block()
+    } catch let error as DecodingError {
+        var error = error
+        error.metadata.path = keyPath.keys.map{$0.key} + error.metadata.path
+        error.metadata.rootObject = json
         throw error
     } catch let error {
         throw error

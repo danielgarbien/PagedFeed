@@ -12,8 +12,59 @@
 
 import Foundation
 
+// ----------------------------------------------------------------------------------------
+// MARK: Documentation
+// ----------------------------------------------------------------------------------------
+
+struct Behaviour {
+    let throwsIfKeyMissing: Bool
+    let throwsIfNull: Bool
+    let throwsFromDecodeClosure: Bool
+}
+
+
+let fileManager = FileManager.default
+let documentationTemplate = try String(contentsOfFile: fileManager.currentDirectoryPath + "/Templates/Documentation.swift")
+
+func documentationFromTemplate(path: String, throwsIf: String, returns: String) -> String {
+    return documentationTemplate
+        .replacingOccurrences(of: "{path}", with: path)
+        .replacingOccurrences(of: "{throws}", with: throwsIf)
+        .replacingOccurrences(of: "{returns}", with: returns)
+}
+
+func generateDocumentationComment(_ behaviour: Behaviour) -> String {
+    switch (behaviour.throwsIfKeyMissing, behaviour.throwsIfNull) {
+    case (true, true):
+        return documentationFromTemplate(
+            path: "`KeyPath`– can be appended using with `=>` or `=>?`",
+            throwsIf: "`DecodingError.typeMismatchError`,`.other(error, metadata)` or possible `.missingKeyError` on required keys",
+            returns: "something"
+        )
+    case (true, false):
+        return documentationFromTemplate(
+            path: "`KeyPath`– can be appended using with `=>` or `=>?`",
+            throwsIf: "`DecodingError` if a key is missing or decoding fails.",
+            returns: "`nil` if the object at `path` is `NSNull`"
+            )
+    case (false, false):
+        return documentationFromTemplate(
+            path: "`KeyPath`– can be appended using with `=>` or `=>?`",
+            throwsIf: "`DecodingError.typeMismatch, `.other(error, metadata)` or possible `.missingKeyError` on required keys",
+            returns: "`nil` if the object at `path` is `NSNull` or if any optional key is missing."
+        )
+    case (false, true):
+        fatalError("This case should never happen, right?")
+    }
+}
+
+// ----------------------------------------------------------------------------------------
+// MARK:
+// ----------------------------------------------------------------------------------------
+
+
 class TypeNameProvider {
-    var names = Array(["A", "B", "C", "D", "E", "F", "G"].reverse())
+    var names = Array(["A", "B", "C", "D", "E", "F", "G"].reversed())
     var takenNames: [Unique: String] = [:]
     subscript(key: Unique) -> String {
         if let name = takenNames[key] {
@@ -50,37 +101,35 @@ indirect enum Decodable {
     case Optional(Decodable)
     case Dictionary(Decodable, Decodable)
     
-    func decodeClosure(provider: TypeNameProvider) -> String {
+    func decodeClosure(_ provider: TypeNameProvider) -> String {
         switch self {
-        case T(let key):
+        case .T(let key):
             return "\(provider[key]).decode"
             //        case .AnyObject:
         //            return "{$0}"
-        case Optional(let T):
-            return "catchNull(\(T.decodeClosure(provider)))"
-        case Array(let T):
-            return "decodeArray(\(T.decodeClosure(provider)))"
+        case .Optional(let T):
+            return "Optional.decoder(\(T.decodeClosure(provider)))"
+        case .Array(let T):
+            return "Array.decoder(\(T.decodeClosure(provider)))"
         case .Dictionary(let K, let T):
-            return "decodeDictionary(\(K.decodeClosure(provider)), elementDecodeClosure: \(T.decodeClosure(provider)))"
+            return "Dictionary.decoder(key: \(K.decodeClosure(provider)), value: \(T.decodeClosure(provider)))"
         }
     }
     
-    func typeString(provider: TypeNameProvider) -> String {
+    func typeString(_ provider: TypeNameProvider) -> String {
         switch self {
         case .T(let unique):
             return provider[unique]
-        case Optional(let T):
+        case .Optional(let T):
             return "\(T.typeString(provider))?"
-        case Array(let T):
+        case .Array(let T):
             return "[\(T.typeString(provider))]"
         case .Dictionary(let K, let T):
             return "[\(K.typeString(provider)): \(T.typeString(provider))]"
-            //        case .AnyObject:
-            //            return "AnyObject"
         }
     }
     
-    func generateAllPossibleChildren(deepness: Int) -> [Decodable] {
+    func generateAllPossibleChildren(_ deepness: Int) -> [Decodable] {
         guard deepness > 0 else { return [.T(Unique())] }
         
         var array = [Decodable]()
@@ -109,34 +158,45 @@ indirect enum Decodable {
         }
     }
     
-    func generateOverloads(operatorString: String) -> [String] {
+    func generateOverloads(_ operatorString: String) -> [String] {
         let provider = TypeNameProvider()
-        let returnType: String
-        let parseCallString: String
         let behaviour: Behaviour
+        let keyPathType: String
+        
+        let returnType = typeString(provider)
+        let overloads = [String]()
+        
+        let arguments = provider.takenNames.values.sorted().map { $0 + ": Decodable" }
+        let generics = arguments.count > 0 ? "<\(arguments.joined(separator: ", "))>" : ""
         
         switch operatorString {
         case "=>":
-            returnType = typeString(provider)
             behaviour = Behaviour(throwsIfKeyMissing: true, throwsIfNull: !isOptional, throwsFromDecodeClosure: true)
-            parseCallString = "parse"
+            keyPathType = "KeyPath"
+            
+            /*
+            // Start again
+            guard isOptional else { break }
+            let otherBehaviour = Behaviour(throwsIfKeyMissing: false, throwsIfNull: !isOptional, throwsFromDecodeClosure: true)
+            let documentation = generateDocumentationComment(otherBehaviour)
+            overloads.append(documentation + "public func \(operatorString) \(generics)(json: AnyObject, keyPath: OptionalKeyPath) throws -> \(returnType) {\n" +
+                "    return try parse(json, keyPath: keyPath.markingFirst(required: true), decode: \(decodeClosure(provider)))\n" +
+                "}"
+            )
+ */
+            
         case "=>?":
-            returnType = typeString(provider) + "?"
-            behaviour = Behaviour(throwsIfKeyMissing: false, throwsIfNull: !isOptional, throwsFromDecodeClosure: true)
-            parseCallString = "parseAndAcceptMissingKey"
+            //returnType += "?"
+            // Never trows if null
+            behaviour = Behaviour(throwsIfKeyMissing: false, throwsIfNull: false, throwsFromDecodeClosure: true)
+            keyPathType = "OptionalKeyPath"
         default:
             fatalError()
         }
         
-        let arguments = provider.takenNames.values.sort().map { $0 + ": Decodable" }
-        let generics = arguments.count > 0 ? "<\(arguments.joinWithSeparator(", "))>" : ""
-        
         let documentation = generateDocumentationComment(behaviour)
-        let throwKeyword =  "throws"
-        return [documentation + "public func \(operatorString) \(generics)(json: AnyObject, path: String)\(throwKeyword)-> \(returnType) {\n" +
-            "    return try \(parseCallString)(json, path: [path], decode: \(decodeClosure(provider)))\n" +
-            "}", documentation + "public func \(operatorString) \(generics)(json: AnyObject, path: [String])\(throwKeyword)-> \(returnType) {\n" +
-                "    return try \(parseCallString)(json, path: path, decode: \(decodeClosure(provider)))\n" +
+        return overloads + [documentation + "public func \(operatorString) \(generics)(json: Any, keyPath: \(keyPathType)) throws -> \(returnType) {\n" +
+            "    return try parse(json, keyPath: keyPath, decoder: \(decodeClosure(provider)))\n" +
             "}"
         ]
     }
@@ -160,59 +220,31 @@ func filterOptionals(type: Decodable) -> Decodable? {
     }
 }
 
-struct Behaviour {
-    let throwsIfKeyMissing: Bool
-    let throwsIfNull: Bool
-    let throwsFromDecodeClosure: Bool
-}
-
-func generateDocumentationComment(behaviour: Behaviour) -> String {
-    var string =
-        "/**\n" +
-            " Retrieves the object at `path` from `json` and decodes it according to the return type\n" +
-            "\n" +
-            " - parameter json: An object from NSJSONSerialization, preferably a `NSDictionary`.\n" +
-    " - parameter path: A null-separated key-path string. Can be generated with `\"keyA\" => \"keyB\"`\n"
-    switch (behaviour.throwsIfKeyMissing, behaviour.throwsIfNull) {
-    case (true, true):
-        string += " - Throws: `MissingKeyError` if `path` does not exist in `json`. `TypeMismatchError` or any other error thrown in the decode-closure\n"
-    case (true, false):
-        string += " - Returns: nil if the pre-decoded object at `path` is `NSNull`.\n"
-        string += " - Throws: `MissingKeyError` if `path` does not exist in `json`. `TypeMismatchError` or any other error thrown in the decode-closure\n"
-    case (false, false):
-        string += " - Returns: nil if `path` does not exist in `json`, or if that object is `NSNull`.\n"
-        string += " - Throws: `TypeMismatchError` or any other error thrown in the decode-closure\n"
-    case (false, true):
-        break
-    }
-    return string + "*/\n"
-}
 
 let file = "Overloads.swift"
-let fileManager = NSFileManager.defaultManager()
 let sourcesDirectory = fileManager.currentDirectoryPath + "/../Sources"
 
 
 let filename = "Overloads.swift"
 let path = sourcesDirectory + "/" + filename
 
-let dateFormatter = NSDateFormatter()
-dateFormatter.dateStyle = .ShortStyle
+var dateFormatter = DateFormatter()
+dateFormatter.dateStyle = .short
 
-let date = dateFormatter.stringFromDate(NSDate())
+let date = dateFormatter.string(from: Date())
 
 let overloads = Decodable.T(Unique()).generateAllPossibleChildren(4)
 let types = overloads.map { $0.typeString(TypeNameProvider()) }
-let all = overloads.flatMap { $0.generateOverloads("=>") } + overloads.flatMap(filterOptionals).flatMap { $0.generateOverloads("=>?") }
+let all = overloads.flatMap { $0.generateOverloads("=>") } + overloads.flatMap(filterOptionals).map{ $0.wrapInOptionalIfNeeded() }.flatMap { $0.generateOverloads("=>?") }
 
 do {
-    var template = try String(contentsOfFile: fileManager.currentDirectoryPath + "/Template.swift")
-    template = template.stringByReplacingOccurrencesOfString("{filename}", withString: filename)
-    template = template.stringByReplacingOccurrencesOfString("{by}", withString: "Generator.swift")
-    template = template.stringByReplacingOccurrencesOfString("{overloads}", withString: types.joinWithSeparator(", "))
-    template = template.stringByReplacingOccurrencesOfString("{count}", withString: "\(all.count)")
-    let text = template + "\n" + all.joinWithSeparator("\n\n")
-    try text.writeToFile(sourcesDirectory + "/Overloads.swift", atomically: false, encoding: NSUTF8StringEncoding)
+    var template = try String(contentsOfFile: fileManager.currentDirectoryPath + "/Templates/Header.swift")
+	template = template.replacingOccurrences(of: "{filename}", with: filename)
+	template = template.replacingOccurrences(of: "{by}", with: "Generator.swift")
+	template = template.replacingOccurrences(of: "{overloads}", with: types.joined(separator: ", "))
+    template = template.replacingOccurrences(of: "{count}", with: "\(all.count)")
+	let text = (template as String) + "\n" + all.joined(separator: "\n\n")
+	try text.write(toFile: sourcesDirectory + "/Overloads.swift", atomically: false, encoding: String.Encoding.utf8)
 }
 catch {
     print(error)

@@ -1,16 +1,13 @@
 # Decodable
-Simple yet powerful object mapping made possible by Swift 2's new error handling. Greatly inspired by [Argo](http://github.com/thoughtbot/Argo), but without a bizillion functional operators.
+Simple and strict, yet powerful object mapping made possible by Swift 2's error handling. Greatly inspired by [Argo](http://github.com/thoughtbot/Argo), but without a bizillion functional operators.
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Cocoapods version](https://cocoapod-badges.herokuapp.com/v/Decodable/badge.png)](https://cocoapods.org/pods/Decodable)
-[![Platforms](https://cocoapod-badges.herokuapp.com/p/Decodable/badge.png
-)](https://cocoadocs.org/docsets/NSStringMask)
+[![Platforms](https://cocoapod-badges.herokuapp.com/p/Decodable/badge.png)](https://cocoadocs.org/docsets/NSStringMask)
 [![Travis](https://img.shields.io/travis/Anviking/Decodable/master.svg)](https://travis-ci.org/Anviking/Decodable/branches)
 
-## Example:
 
 ```swift
-
 struct Repository {
     let name: String
     let description: String
@@ -25,9 +22,9 @@ struct Repository {
 }
 
 extension Repository: Decodable {
-    static func decode(j: AnyObject) throws -> Repository {
+    static func decode(j: Any) throws -> Repository {
         return try Repository(
-                    name: j => "name", 
+                    name: j => "nested" => "name", 
                     description: j => "description", 
                     stargazersCount: j => "stargazers_count", 
                     language: j => "language", 
@@ -40,7 +37,7 @@ extension Repository: Decodable {
 
 do {
     let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-    let repo = try Repository.decode(json)
+    let repo = try [Repository].decode(json)
 } catch {
     print(error)
 }
@@ -51,29 +48,61 @@ do {
 ### A protocol
 ```swift
 public protocol Decodable {
-    static func decode(json: AnyObject) throws -> Self
+    static func decode(json: Any) throws -> Self
 }
 ```
 ### A parse-function
 ```swift
-public func parse<T>(json: AnyObject, path: [String], decode: (AnyObject throws -> T)) throws -> T
+public func parse<T>(json: Any, path: [String], decode: (Any throws -> T)) throws -> T
 ```
 
 ### And shameless operator-overloading
-The overloads, all calling the `parse`-function, can be found in [Operators.swift](https://github.com/Anviking/Decodable/blob/master/Sources/Operators.swift)
+The too-many generated overloads, all calling the `parse`-function, can be found in [Overloads.swift](https://github.com/Anviking/Decodable/blob/master/Sources/Overloads.swift). Return types include `T?`, `[T?]`, `[T?]?`, `Any` and `[String: T]?`. When conditional protocol conformance is supported in Swift this won't be necessary, and automagic decoding of infinitly nested generic types (like `[[[[[[[[[A???]]: B]]]?]]?]]`) would work.
 
 An overload may look like this:
 ```swift
-public func => <T: Decodable>(lhs: AnyObject, rhs: String) throws -> T
+public func => <T: Decodable>(json: Any, keyPath: KeyPath) throws -> T
 ```
 
-Then there are also overloads for returning `T?`, `[T?]`, `[T?]?`, `AnyObject`, `[String: T]?` and more. 
+## KeyPaths
+Keypaths can be created from string and array literals as well as with explicit initializers. They can also be joined using the operators `=>` and `=>?`. `=>?` is another operator that indicates that `nil` should be returned if the key to the right is missing.
 
+- When composing `=>` and `=>?` operators in the same keypath, the strictness of `=>` is still honoured.
+- Optional key paths (`=>?`) require an optional return type
+
+```swift
+let a: KeyPath = "a"
+let b: KeyPath = ["a", "b"]
+let c: KeyPath = "a" => "b" => "c"
+let string: String? = json =>? "key1" => "key2" => "key3"`
+                                ^^^^ allowed to be missing
+```
 ## Errors
-`ErrorTypes` conforming to `DecodingError` will be caught and rethrown in the decoding process to set metadata, like the JSON object that failed decoding, the key path to it, and the root JSON object. There are currently three error-structs conforming to it:
-- `TypeMismachError`
-- `MissingKeyError`
-- `RawRepresentableInitializationError`
+Errors will be caught and rethrown in the decoding process to backpropagate metadata, like the JSON object that failed decoding, the key path to it, and the root JSON object.
+
+From [DecodingError.swift](https://github.com/anviking/decodable/tree/master/Sources/DecodingError.swift):
+```swift
+public enum DecodingError: ErrorProtocol, Equatable {
+    /// Thrown when optional casting from `Any` fails.
+    ///
+    /// This can happen both when trying to access a key on a object
+    /// that isn't a `NSDictionary`, and failing to cast a `Castable`
+    /// primitive.
+    case typeMismatch(expected: Any.Type, actual: Any.Type, Metadata)
+    
+    /// Thrown when a given, required, key was not found in a dictionary.
+    case missingKey(String, Metadata)
+    
+    /// Thrown from the `RawRepresentable` extension when
+    /// `init(rawValue:)` returned `nil`.
+    case rawRepresentableInitializationError(rawValue: Any, Metadata)
+    
+    /// When an error is thrown that isn't `DecodingError`, it 
+    /// will be wrapped in `DecodingError.other` in order to also provide
+    /// metadata about where the error was thrown.
+    case other(ErrorProtocol, Metadata)
+}
+```
 
 ```swift
 let dict: NSDictionary = ["object": ["repo": ["owner": ["id" : 1, "login": "anviking"]]]]
@@ -102,24 +131,52 @@ For convenience there is an operator, `=>?`, that only returns nil on missing ke
 |  `=>? -> T?`| nil | nil | throws | uncaught (throws) | 
 |  `try? => -> T `| nil | nil | nil | caught (nil) | 
 
+## Customization
+`Int`, `Double`,`String`, `Bool`, `Date` (ISO8601), `NSArray`, and `NSDictionary` types that conform to `DynamicDecodable` with the following declaration:
+```swift
+public protocol DynamicDecodable {
+    associatedtype DecodedType
+    static var decoder: (Any) throws -> DecodedType {get set}
+}
+```
+This allows Decodable to implement default decoding closures while allowing you to override them as needed.
+```swift
+// Lets extend Bool.decoder so that it accepts certain strings:
+Bool.decoder = { json in
+    switch json {
+    case let str as String where str == "true":
+        return true
+    case let str as String where str == "false":
+        return false
+    default:
+        return try cast(json)
+    }
+}
+```
+
+Note that when extending new types to conform to `Decodable` there is really no point in conforming to `DynamicDecodable` since you already control the implementation. Also note that the `decoder` properties are intended as "set once". If you need different behaviour on different occations, please create custom decode functions.
+
+The default `Date.decoder` uses a ISO8601 date formatter. If you don't want to create your own decode closure there's a helper:
+```swift
+Date.decoder = Date.decoder(using: formatter)
+```
+
+## When `Decodable` isn't enough
+Don't be afraid of not conforming to `Decodable`.
+```
+let array = try NSArray.decode(json => "list").map {
+    try Contribution(json: $0, repository: repo)
+}
+```
 
 ## Tips
 - You can use `Decodable` with classes. Just make sure to either call a `required` initializer on self (e.g `self.init`) and return `Self`, or make your class `final`. ( [This](http://stackoverflow.com/questions/26495586/best-practice-to-implement-a-failable-initializer-in-swift) might be a problem though)
 - The `Decodable`-protocol and the `=>`-operator should in no way make you committed to use them everywhere.
 
-For example you could...
+## Compatibility
 
-- Skip adapting the `Decodable` protocol, and parse things differently depending on the context (like `defaultBranch` in the example code).
-- Make your own protocols!
-- Create your own throwing decode-functions, e.g for `NSDate`, or convenience-extensions with your own date-formatter.
-```swift
-public class func decode(json: AnyObject) throws -> Self {
-        let string = try String.decode(json)
-
-        guard let date = ISO8601DateFormatter.dateFromString(string) else {
-            throw NSDateDecodingError.InvalidStringFormat
-        }
-
-        return self.init(timeIntervalSince1970: date.timeIntervalSince1970)
-}
-```
+| Swift version | Compatible tag or branch |
+| --- | --- |
+| Swift 3.0 | `v0.5` |
+| Swift 2.3 | `v0.4.4`|
+| Swift 2.2 | `v0.4.3`|

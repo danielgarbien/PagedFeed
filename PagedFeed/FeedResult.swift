@@ -18,5 +18,5 @@ enum FeedResult<Page> {
     case feedEnd
     case error(error: Error, retry: LoadPageBlock)
     
-    typealias LoadPageBlock = (_ completion: (FeedResult<Page>) -> Void) -> Void
+    typealias LoadPageBlock = (_ completion: @escaping (FeedResult<Page>) -> Void) -> Void
 }

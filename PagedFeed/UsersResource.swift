@@ -44,9 +44,9 @@ private extension UsersResource {
 extension UsersResource: Resource {
 
     func request() -> URLRequest {
-        return URLRequest(url: baseURL,
-                            cachePolicy: "search/users",
-                            timeoutInterval: parameters)!
+        return URLRequest(baseURL: baseURL,
+                          path: "search/users",
+                          parameters: parameters)!
     }
     
     var parse: (Data) throws -> [User] {

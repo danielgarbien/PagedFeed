@@ -61,7 +61,7 @@ private extension SearchUsersViewController {
         }
         usersVC.startFeed { limit -> FeedResult<[User]>.LoadPageBlock in
             // knowing page limit desired by Items VC, create load function and pass to Items VC
-            func load(_ completion: ((FeedResult<[User]>) -> Void)) {
+            func load(_ completion: @escaping ((FeedResult<[User]>) -> Void)) {
                 dataAccess.usersWithQuery(
                     searchTerm,
                     sort: usersSort,

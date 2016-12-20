@@ -21,6 +21,6 @@ extension URLRequest {
         guard let componentsURL = components?.url else {
             return nil
         }
-        (self as NSURLRequest).init(url: componentsURL)
+        self.init(url: componentsURL)
     }
 }

@@ -65,7 +65,7 @@ class Synchronizer {
         sessionDelegate.setCompletionHandlerForTask(task) { (data, response, error) in
             
             guard error?.code != NSURLErrorCancelled else {
-                print("Request with URL: \(request.url ?? "") was cancelled")
+                print("Request with URL: \(request.url ?? nil) was cancelled")
                 return // cancel quitely
             }
 

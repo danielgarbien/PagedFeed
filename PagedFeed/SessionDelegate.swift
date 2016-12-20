@@ -47,7 +47,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let mutableData = dataForTask[dataTask] else {
-            dataForTask[dataTask] = NSData(data: data) as Data as Data
+            dataForTask[dataTask] = NSMutableData(data: data)
             return
         }
         mutableData?.append(data)

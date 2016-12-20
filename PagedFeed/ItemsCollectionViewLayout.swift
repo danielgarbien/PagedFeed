@@ -27,13 +27,13 @@ class ItemsCollectionViewLayout: ColumnFeedCollectionViewLayout {
             forSupplementaryViewOfKind: ItemsCollectionFooterSupplementaryKind,
             with: ItemsCollectionViewLayout.bottomSupplementaryViewIndexPath)
         
-        let superContentSize = super.collectionViewContentSize()
+        let superContentSize = super.collectionViewContentSize
         bottomSupplementaryViewAtt.frame = CGRect(
             x: 0, y: superContentSize.height, width: superContentSize.width, height: 44)
     }
     
     override var collectionViewContentSize : CGSize {
-        let superContentSize = super.collectionViewContentSize()
+        let superContentSize = super.collectionViewContentSize
         return CGSize(width: superContentSize.width,
                       height: superContentSize.height + bottomSupplementaryViewAtt.frame.height)
     }

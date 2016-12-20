@@ -22,7 +22,7 @@ class NetworkDataAccess {
 extension NetworkDataAccess: DataAccess {
     
     /// Error case result in completion block (if thrown) origins from Synchronizer
-    func usersWithQuery(_ q: String, sort: UsersResourceSort, pageSize: Int, completion: (FeedResult<[User]>) -> Void) {
+    func usersWithQuery(_ q: String, sort: UsersResourceSort, pageSize: Int, completion: @escaping (FeedResult<[User]>) -> Void) {
         // cancel previous session
         synchronizer.cancelSession()
         

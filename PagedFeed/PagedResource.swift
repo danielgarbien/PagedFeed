@@ -11,7 +11,7 @@ import Foundation
 protocol PagedResource: Resource {
     
     // PagedResource must return array of objects
-    associatedtype ParsedObject: _ArrayType
+    associatedtype ParsedObject: _ArrayProtocol
     
     func resourceForPage(_ page: Int, pageSize: Int) -> Self
 }

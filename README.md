@@ -1,3 +1,3 @@
 # PagedFeed
 
-More: https://github.com/danielgarbien/PagedFeed and https://danielgarbien.com/blog/ImageCaching/
+More: https://danielgarbien.com/blog/PagedFeed/ and https://danielgarbien.com/blog/ImageCaching/

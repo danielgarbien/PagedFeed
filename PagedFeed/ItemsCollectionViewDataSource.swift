@@ -28,6 +28,7 @@ class ItemsCollectionViewDataSource<Item>: SimpleCollectionViewDataSource<ItemCo
     
     // MARK: - UICollectionViewDataSource
     
+    @objc
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
         let identifier = supplementaryRegistration.reuseIdentifierForClass(ItemsCollectionBottomReusableView.self, inCollectionView: collectionView)
         footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as? ItemsCollectionBottomReusableView

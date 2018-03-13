@@ -431,16 +431,16 @@
 				TargetAttributes = {
 					656A36FA1CFB2FB1001407DA = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 0920;
 					};
 					656A370E1CFB2FB1001407DA = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 0920;
 						TestTargetID = 656A36FA1CFB2FB1001407DA;
 					};
 					656A37191CFB2FB1001407DA = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 0920;
 						TestTargetID = 656A36FA1CFB2FB1001407DA;
 					};
 				};
@@ -673,7 +673,8 @@
 				MY_API_BASE_URL_ENDPOINT = "https://api.github.com";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeed;
 				PRODUCT_NAME = PagedFeed;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -690,7 +691,8 @@
 				MY_API_BASE_URL_ENDPOINT = "https://api.github.com";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeed;
 				PRODUCT_NAME = PagedFeed;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -702,7 +704,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeedTests;
 				PRODUCT_NAME = PagedFeedTests;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PagedFeed.app/PagedFeed";
 			};
 			name = Debug;
@@ -715,7 +718,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeedTests;
 				PRODUCT_NAME = PagedFeedTests;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PagedFeed.app/PagedFeed";
 			};
 			name = Release;
@@ -727,7 +731,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeedUITests;
 				PRODUCT_NAME = PagedFeedUITests;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = PagedFeed;
 			};
 			name = Debug;
@@ -739,7 +744,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielgarbien.PagedFeedUITests;
 				PRODUCT_NAME = PagedFeedUITests;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = PagedFeed;
 			};
 			name = Release;

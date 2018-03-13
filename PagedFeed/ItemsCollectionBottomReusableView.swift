@@ -55,10 +55,10 @@ private extension ItemsCollectionBottomReusableView {
     func tryAgainAttributedTitleWithMessage(_ message: String, font: UIFont) -> NSAttributedString {
         let mutableString = NSMutableAttributedString(
             string: message,
-            attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.myGreyColor()])
+            attributes: [.font: font, .foregroundColor: UIColor.myGreyColor()])
         mutableString.append(NSAttributedString(
             string: " Try again.",
-            attributes: [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.myRedColor()])
+            attributes: [.font: font, .foregroundColor: UIColor.myRedColor()])
         )
         return mutableString
     }

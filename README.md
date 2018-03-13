@@ -1,3 +1,3 @@
 # PagedFeed
 
-More: http://danielgarbien.com/ios/2016/07/15/PagedFeed.html
+More: https://github.com/danielgarbien/PagedFeed and https://danielgarbien.com/blog/ImageCaching/

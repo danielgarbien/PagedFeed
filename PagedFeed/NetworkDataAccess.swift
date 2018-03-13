@@ -31,9 +31,7 @@ extension NetworkDataAccess: DataAccess {
     }
 }
 
-extension UsersResource: PagedResource {
-    
-    typealias ParsedObject = [User]
+extension UsersResource: PageResources {
     
     func resourceForPage(_ page: Int, pageSize: Int) -> UsersResource {
         return UsersResource(
@@ -42,5 +40,9 @@ extension UsersResource: PagedResource {
             sort: sort,
             page: page,
             pageSize: pageSize)
+    }
+    
+    func isLastPage(_ page: [User], pageSize: Int) -> Bool {
+        return page.count < pageSize
     }
 }

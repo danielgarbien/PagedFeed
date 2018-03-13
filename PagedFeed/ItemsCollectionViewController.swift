@@ -51,7 +51,7 @@ class ItemsCollectionViewController<Item>: UIViewController {
         return LoadingFeedStateMachine() { [weak self] state in
             switch state {
             case .loading(true): self?.resetCollection()
-            case .succeed(let items): self?.updateCollectionByAppendingItems(items)
+            case .succeed(let items, _): self?.updateCollectionByAppendingItems(items)
             default: break
             }
             self?.dataSource.footerView?.updateWithLoadingState(state)

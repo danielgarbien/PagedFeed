@@ -11,7 +11,7 @@ import UIKit
 enum LoadingFeedState<Page> {
     case idle
     case loading(initial: Bool)
-    case succeed(page: Page)
+    case succeed(page: Page, lastPage: Bool)
     case failed(error: Error)
     case ended
 }
@@ -60,7 +60,7 @@ class LoadingFeedStateMachine<Page> {
         switch result {
         case .success(let page, let nextPage):
             loadNext = nextPage
-            state = .succeed(page: page)
+            state = .succeed(page: page, lastPage: loadNext == nil)
         case .error(let message, let retry):
             loadNext = retry
             state = .failed(error: message)

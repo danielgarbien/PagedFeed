@@ -12,6 +12,8 @@ extension ItemsCollectionBottomReusableView {
     
     func updateWithLoadingState<T>(_ loadingState: LoadingFeedState<T>) {
         switch loadingState {
+        case .succeed(_, lastPage: true):
+            state = .theEnd
         case .idle, .succeed:
             state = .idle
         case .loading:

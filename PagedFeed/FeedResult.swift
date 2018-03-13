@@ -14,7 +14,7 @@ import Foundation
  With success/error results it provides convenient blocks for loading nextPage/retry operations.
  */
 enum FeedResult<Page> {
-    case success(page: Page, nextPage: LoadPageBlock)
+    case success(page: Page, nextPageIfNotLast: LoadPageBlock?)
     case feedEnd
     case error(error: Error, retry: LoadPageBlock)
     

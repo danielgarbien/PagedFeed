@@ -29,11 +29,14 @@ enum SynchronizerError: Error {
 
 class Synchronizer {
     
-    fileprivate lazy var session: URLSession! = URLSession(
-        configuration: self.sessionConfiguration,
-        delegate: SessionDelegate(cacheTime: self.cacheTime),
-        delegateQueue: OperationQueue.main
-    )
+    fileprivate lazy var session = self.createSession()
+    private func createSession() -> URLSession {
+        return URLSession(
+            configuration: self.sessionConfiguration,
+            delegate: SessionDelegate(cacheTime: self.cacheTime),
+            delegateQueue: OperationQueue.main
+        )
+    }
     fileprivate var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
     fileprivate let sessionConfiguration: URLSessionConfiguration
     fileprivate let cacheTime: TimeInterval
@@ -46,7 +49,7 @@ class Synchronizer {
     
     func cancelSession() {
         session.invalidateAndCancel()
-        session = nil
+        session = createSession()
     }
     
     typealias CancelLoading = () -> Void

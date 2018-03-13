@@ -37,8 +37,8 @@ class ItemsCollectionViewController<Item>: UIViewController {
     }
     
     func reset() {
-        loadingStateMachine = nil
         resetCollection()
+        loadingStateMachine = createLoadingStateMachine()
     }
     
     override func loadView() {
@@ -46,15 +46,16 @@ class ItemsCollectionViewController<Item>: UIViewController {
     }
     
     // MARK: - Paging
-    fileprivate lazy var loadingStateMachine: LoadingFeedStateMachine<[Item]>! = LoadingFeedStateMachine(stateDidChange: self.handleLoadingStateChange)
-    
-    fileprivate func handleLoadingStateChange(_ state: LoadingFeedState<[Item]>) {
-        switch state {
-        case .loading(true): resetCollection()
-        case .succeed(let items): updateCollectionByAppendingItems(items)
-        default: break
+    fileprivate lazy var loadingStateMachine = self.createLoadingStateMachine()
+    private func createLoadingStateMachine() -> LoadingFeedStateMachine<[Item]> {
+        return LoadingFeedStateMachine() { [weak self] state in
+            switch state {
+            case .loading(true): self?.resetCollection()
+            case .succeed(let items): self?.updateCollectionByAppendingItems(items)
+            default: break
+            }
+            self?.dataSource.footerView?.updateWithLoadingState(state)
         }
-        dataSource.footerView?.updateWithLoadingState(loadingStateMachine.state)
     }
     
     fileprivate func pageLimit() -> Int {

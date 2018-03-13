@@ -39,7 +39,7 @@ class ColumnFeedCollectionViewLayout: UICollectionViewLayout {
         fatalError("init(coder:) has not been implemented")
     }
     
-    fileprivate lazy var attributes: [IndexPath: UICollectionViewLayoutAttributes]! = [IndexPath: UICollectionViewLayoutAttributes]()
+    fileprivate lazy var attributes = [IndexPath: UICollectionViewLayoutAttributes]()
     fileprivate var columns: Columns!
 
     // MARK: - Overridden
@@ -61,7 +61,7 @@ class ColumnFeedCollectionViewLayout: UICollectionViewLayout {
     
     override func invalidateLayout() {
         super.invalidateLayout()
-        attributes = nil
+        attributes = [IndexPath: UICollectionViewLayoutAttributes]()
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

@@ -7,17 +7,20 @@
 //
 
 import Foundation
-import Decodable
 
 extension User: Decodable {
     
-    static func decode(_ j: Any) throws -> User {
-        return try User(
-            login: j => "login",
-            score: j => "score",
-            type: j => "type",
-            avatarURL: j => "avatar_url"
-        )
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        login = try container.decode(String.self, forKey: .login)
+        score = try container.decode(Double.self, forKey: .score)
+        type = try container.decode(UserType.self, forKey: .type)
+        avatarURL = try container.decode(URL.self, forKey: .avatarURL)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case login, score, type
+        case avatarURL = "avatar_url"
     }
 }
 

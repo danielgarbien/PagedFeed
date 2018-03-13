@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Decodable
 
 struct UsersResource {
     let baseURL: URL
@@ -51,9 +50,18 @@ extension UsersResource: Resource {
     
     var parse: (Data) throws -> [User] {
         return { data in
-            let json = try JSONSerialization.jsonObject(with: data, options: [])
-            return try json => "items"
+            return try JSONDecoder()
+                .decode(GitHubSearchUsersResult.self, from: data)
+                .items
         }
+    }
+}
+
+private struct GitHubSearchUsersResult: Decodable {
+    let items: [User]
+    
+    enum CodingKeys: String, CodingKey {
+        case items
     }
 }
 

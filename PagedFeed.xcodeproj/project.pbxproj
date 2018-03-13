@@ -27,8 +27,6 @@
 		65A747841D04A8D100B88F0E /* SimpleCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A747831D04A8D100B88F0E /* SimpleCollectionViewDataSource.swift */; };
 		65A747871D04E05000B88F0E /* ItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A747851D04E05000B88F0E /* ItemCollectionViewCell.swift */; };
 		65A747881D04E05000B88F0E /* ItemCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65A747861D04E05000B88F0E /* ItemCollectionViewCell.xib */; };
-		65B34E341CFB5D89005FD30F /* Decodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65B34E331CFB5D89005FD30F /* Decodable.framework */; };
-		65B34E351CFB5D8A005FD30F /* Decodable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65B34E331CFB5D89005FD30F /* Decodable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		65B34E3B1CFB7DF7005FD30F /* DaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */; };
 		65B34E401CFB8309005FD30F /* NSBundle+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */; };
 		65C0D9DE1D64F4990033179C /* NSURLRequest+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */; };
@@ -65,27 +63,12 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		65B34E361CFB5D8A005FD30F /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				65B34E351CFB5D8A005FD30F /* Decodable.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		650A2BD41D0BEE89008FB18E /* UICollectionView+Conveniences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Conveniences.swift"; sourceTree = "<group>"; };
 		650A2BE31D0C2B0E008FB18E /* UIViewController+Containment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Containment.swift"; sourceTree = "<group>"; };
 		650A2BE81D0C2BDE008FB18E /* SearchUsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchUsersViewController.swift; sourceTree = "<group>"; };
 		6512816B1D09D8F1001CB91D /* LoadingFeedStateMachine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingFeedStateMachine.swift; sourceTree = "<group>"; };
 		6512816D1D09F017001CB91D /* ItemsCollectionBottomReusableView+LoadingFeedState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ItemsCollectionBottomReusableView+LoadingFeedState.swift"; sourceTree = "<group>"; };
-		65155C451D00FA0200F94EE2 /* PagedResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagedResource.swift; sourceTree = "<group>"; };
 		651791AA1CFE164B006214E1 /* Synchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronizer.swift; sourceTree = "<group>"; };
 		651791AE1CFE3CF6006214E1 /* NetworkDataAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDataAccess.swift; sourceTree = "<group>"; };
 		6543F79C1D65AF6A00CA0A10 /* Synchronizer+PagedResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Synchronizer+PagedResource.swift"; sourceTree = "<group>"; };
@@ -106,7 +89,6 @@
 		65A747831D04A8D100B88F0E /* SimpleCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		65A747851D04E05000B88F0E /* ItemCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemCollectionViewCell.swift; sourceTree = "<group>"; };
 		65A747861D04E05000B88F0E /* ItemCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ItemCollectionViewCell.xib; sourceTree = "<group>"; };
-		65B34E331CFB5D89005FD30F /* Decodable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Decodable.framework; path = Carthage/Carthage/Build/iOS/Decodable.framework; sourceTree = "<group>"; };
 		65B34E3A1CFB7DF7005FD30F /* DaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DaoTests.swift; sourceTree = "<group>"; };
 		65B34E3F1CFB8309005FD30F /* NSBundle+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+Convenience.swift"; sourceTree = "<group>"; };
 		65C0D9DD1D64F4990033179C /* NSURLRequest+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLRequest+Convenience.swift"; sourceTree = "<group>"; };
@@ -131,7 +113,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65B34E341CFB5D89005FD30F /* Decodable.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,7 +299,6 @@
 		65B34E371CFB5DA9005FD30F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				65B34E331CFB5D89005FD30F /* Decodable.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -372,7 +352,6 @@
 				656A36F71CFB2FB1001407DA /* Sources */,
 				656A36F81CFB2FB1001407DA /* Frameworks */,
 				656A36F91CFB2FB1001407DA /* Resources */,
-				65B34E361CFB5D8A005FD30F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

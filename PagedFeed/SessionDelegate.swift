@@ -30,8 +30,8 @@ class SessionDelegate: NSObject {
         completionHandlerForTask[task] = handler
     }
     
-    fileprivate var completionHandlerForTask = [URLSessionTask: TaskCompletionHandler]()
-    fileprivate var dataForTask = [URLSessionTask: NSMutableData?]()
+    private var completionHandlerForTask = [URLSessionTask: TaskCompletionHandler]()
+    private var dataForTask = [URLSessionTask: NSMutableData?]()
 }
 
 extension SessionDelegate: URLSessionTaskDelegate {

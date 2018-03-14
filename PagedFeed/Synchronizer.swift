@@ -29,7 +29,7 @@ enum SynchronizerError: Error {
 
 class Synchronizer {
     
-    fileprivate lazy var session = self.createSession()
+    private lazy var session = self.createSession()
     private func createSession() -> URLSession {
         return URLSession(
             configuration: self.sessionConfiguration,
@@ -37,9 +37,9 @@ class Synchronizer {
             delegateQueue: OperationQueue.main
         )
     }
-    fileprivate var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
-    fileprivate let sessionConfiguration: URLSessionConfiguration
-    fileprivate let cacheTime: TimeInterval
+    private var sessionDelegate: SessionDelegate { return session.delegate as! SessionDelegate }
+    private let sessionConfiguration: URLSessionConfiguration
+    private let cacheTime: TimeInterval
     
     init(cacheTime: TimeInterval, URLCache: Foundation.URLCache? = URLSessionConfiguration.default.urlCache) {
         self.cacheTime = cacheTime

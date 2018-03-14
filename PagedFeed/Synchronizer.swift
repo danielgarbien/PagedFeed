@@ -68,11 +68,11 @@ class Synchronizer {
         sessionDelegate.setCompletionHandlerForTask(task) { (data, response, error) in
             
             guard error?.code != NSURLErrorCancelled else {
-                print("Request with URL: \(request.url ?? nil) was cancelled")
+                print("Request with URL: \(String(describing: request.url)) was cancelled")
                 return // cancel quitely
             }
 
-            print("Response: \(response)")
+            print("Response: \(String(describing: response))")
             if let result = SynchronizerResult<Object>.resultWithResponse(response, error: error) {
                 completeOnMainThread(result)
                 return
